@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мій кіножурнал</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="stub-corner stub-corner--tl"></div>
+  <div class="stub-corner stub-corner--tr"></div>
+
+  <header class="header">
+    <div class="header__ticket">
+      <span class="header__label">ЖУРНАЛ №1</span>
+      <h1 class="header__title">Мій кіножурнал</h1>
+      <span class="header__sub">кіно · серіали · аніме · мультфільми, які я подивився</span>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="controls">
+      <div class="controls__search">
+        <input type="text" id="searchInput" placeholder="Пошук за назвою…" autocomplete="off">
+      </div>
+
+      <div class="controls__filters" id="filterButtons">
+        <button class="filter-btn is-active" data-type="all">Всі</button>
+        <button class="filter-btn" data-type="кіно">Кіно</button>
+        <button class="filter-btn" data-type="серіал">Серіал</button>
+        <button class="filter-btn" data-type="аніме">Аніме</button>
+        <button class="filter-btn" data-type="мультфільм">Мультфільм</button>
+      </div>
+
+      <button class="sort-btn" id="sortBtn" title="Сортувати за абеткою">
+        <span id="sortIcon">А→Я</span>
+      </button>
+    </section>
+
+    <section class="log">
+      <table class="log__table">
+        <thead>
+          <tr>
+            <th class="col-title">Назва</th>
+            <th class="col-year">Рік</th>
+            <th class="col-type">Тип</th>
+            <th class="col-rating">Оцінка</th>
+            <th class="col-desc">Нотатки</th>
+          </tr>
+        </thead>
+        <tbody id="movieTableBody">
+          <!-- рядки генеруються скриптом -->
+        </tbody>
+      </table>
+
+      <p class="log__empty" id="emptyState" hidden>Нічого не знайдено. Спробуй інший запит або фільтр.</p>
+    </section>
+
+    <footer class="footer">
+      <span id="countLabel">0 записів</span>
+    </footer>
+
+  </main>
+
+<script>
+  /* =========================================================
+     БАЗА ФІЛЬМІВ
+     Щоб додати новий запис — просто скопіюй один об'єкт
+     і допиши в кінець масиву (кома між об'єктами обов'язкова).
+
+     type: "кіно" | "серіал" | "аніме" | "мультфільм"
+     rating: число від 1 до 10
+  ========================================================= */
+  const movies = [
+    {
+      title: "Наприклад: Паразити",
+      year: 2019,
+      type: "кіно",
+      rating: 9,
+      description: "Приклад запису. Онови цей масив своїми фільмами."
+    },
+    {
+      title: "Приклад: Атака Титанів",
+      year: 2013,
+      type: "аніме",
+      rating: 10,
+      description: "Ще один приклад — можна лишити чи видалити."
+    }
+  ];
+
+  // ---------- стан ----------
+  let currentType = "all";
+  let currentQuery = "";
+  let sortAsc = true;
+
+  const tbody = document.getElementById("movieTableBody");
+  const emptyState = document.getElementById("emptyState");
+  const countLabel = document.getElementById("countLabel");
+  const searchInput = document.getElementById("searchInput");
+  const filterButtons = document.getElementById("filterButtons");
+  const sortBtn = document.getElementById("sortBtn");
+  const sortIcon = document.getElementById("sortIcon");
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function render() {
+    let list = movies.filter(m => {
+      const matchesType = currentType === "all" || m.type === currentType;
+      const matchesQuery = m.title.toLowerCase().includes(currentQuery.toLowerCase());
+      return matchesType && matchesQuery;
+    });
+
+    list = list.slice().sort((a, b) => {
+      const cmp = a.title.localeCompare(b.title, "uk");
+      return sortAsc ? cmp : -cmp;
+    });
+
+    tbody.innerHTML = "";
+
+    list.forEach(m => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="col-title">${escapeHtml(m.title)}</td>
+        <td class="col-year">${m.year}</td>
+        <td class="col-type"><span class="tag tag--${escapeHtml(m.type)}">${escapeHtml(m.type)}</span></td>
+        <td class="col-rating"><span class="rating">${m.rating}</span></td>
+        <td class="col-desc">${escapeHtml(m.description)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    emptyState.hidden = list.length !== 0;
+    countLabel.textContent = `${list.length} ${wordForm(list.length)}`;
+  }
+
+  function wordForm(n) {
+    const mod10 = n % 10;
+    const mod100 = n % 100;
+    if (mod10 === 1 && mod100 !== 11) return "запис";
+    if ([2,3,4].includes(mod10) && ![12,13,14].includes(mod100)) return "записи";
+    return "записів";
+  }
+
+  searchInput.addEventListener("input", (e) => {
+    currentQuery = e.target.value.trim();
+    render();
+  });
+
+  filterButtons.addEventListener("click", (e) => {
+    const btn = e.target.closest(".filter-btn");
+    if (!btn) return;
+    filterButtons.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("is-active"));
+    btn.classList.add("is-active");
+    currentType = btn.dataset.type;
+    render();
+  });
+
+  sortBtn.addEventListener("click", () => {
+    sortAsc = !sortAsc;
+    sortIcon.textContent = sortAsc ? "А→Я" : "Я→А";
+    render();
+  });
+
+  render();
+</script>
+
+</body>
+</html>
