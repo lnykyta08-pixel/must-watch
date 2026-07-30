@@ -382,10 +382,11 @@ magazine.addEventListener("touchend", (e) => {
 
     if (Math.abs(dx) < SWIPE_MIN_DISTANCE || Math.abs(dy) > SWIPE_MAX_OFF_AXIS) return;
 
+    // Миттєвий перехід (без анімації перегортання), щоб одразу можна було свайпнути далі
     if (dx < 0) {
-        goNext();
+        jumpToLeaf(flippedCount + 1);
     } else {
-        goPrev();
+        jumpToLeaf(flippedCount - 1);
     }
 }, { passive: true });
 
