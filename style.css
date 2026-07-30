@@ -1,0 +1,767 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --magazine-w: min(88vw, 900px);
+    --magazine-h: min(88vh, 700px);
+
+    /* Приглушені кольори категорій */
+    --col-movie: #b5524c;
+    --col-movie-light: #e9b7ac;
+    --col-movie-dark: #7a2f2b;
+
+    --col-series: #cfa93e;
+    --col-series-light: #f3dfa0;
+    --col-series-dark: #8f7024;
+
+    --col-cartoon: #6f9463;
+    --col-cartoon-light: #c9dcb9;
+    --col-cartoon-dark: #445c3d;
+
+    --col-anime: #8868a8;
+    --col-anime-light: #d9c7ea;
+    --col-anime-dark: #55406b;
+}
+
+#magazine {
+    box-shadow: 0 8px 40px 0 rgba(0,0,0,0.32), 0 1.5px 8px 0 rgba(0,0,0,0.18);
+    border-radius: 18px;
+    background: #23242a;
+    overflow: visible;
+}
+
+.leaf {
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+}
+
+.magazine-close {
+    top: 24px;
+    right: 24px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+}
+
+.magazine-nav {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+    transform: translateY(-50%);
+    z-index: 1000;
+}
+
+.nav-arrow {
+    pointer-events: auto;
+    background: rgba(30,30,34,0.82);
+    border: 2px solid #fff2;
+    margin: 0 12px;
+}
+
+.magazine-shell {
+    position: relative;
+    margin-top: 40px;
+}
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #1b1c20;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.magazine-shell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+}
+
+/* Каркас журналу */
+
+#magazine {
+    position: relative;
+    width: var(--magazine-w);
+    height: var(--magazine-h);
+    perspective: 2000px;
+    user-select: none;
+}
+
+.pages {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+/* Кнопка закриття */
+
+.magazine-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    transition: background 0.2s, transform 0.2s;
+}
+
+.magazine-close:hover {
+    background: rgba(0, 0, 0, 0.75);
+    transform: scale(1.08);
+}
+
+#magazine:not(.closed) .magazine-close {
+    display: flex;
+}
+
+/* Стрілки навігації */
+
+.magazine-nav {
+    display: flex;
+    gap: 26px;
+}
+
+.nav-arrow {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 1.7rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    transition: background 0.2s, transform 0.2s, opacity 0.2s;
+}
+
+.nav-arrow:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.18);
+    transform: scale(1.08);
+}
+
+.nav-arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* Спільна логіка листка (обкладинка / розворот / палітурка) */
+
+.leaf {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    transition: box-shadow 0.3s;
+    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.35);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.leaf.flipped {
+    transform: rotateY(-180deg);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.leaf.flipping {
+    z-index: 999 !important;
+}
+
+.leaf::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.5), rgba(0,0,0,0) 55%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.leaf.anim-forward,
+.leaf.anim-backward {
+    animation-duration: 1s;
+    animation-timing-function: cubic-bezier(.6,0,.4,1);
+    animation-fill-mode: forwards;
+}
+
+.leaf.anim-forward { animation-name: leaf-turn-forward; }
+.leaf.anim-backward { animation-name: leaf-turn-backward; }
+
+.leaf.anim-forward::after,
+.leaf.anim-backward::after {
+    animation: leaf-shade 1s ease-in-out forwards;
+}
+
+@keyframes leaf-turn-forward {
+    0%   { transform: rotateY(0deg)    scaleX(1); }
+    45%  { transform: rotateY(-92deg)  scaleX(0.82); }
+    55%  { transform: rotateY(-98deg)  scaleX(0.82); }
+    100% { transform: rotateY(-180deg) scaleX(1); }
+}
+
+@keyframes leaf-turn-backward {
+    0%   { transform: rotateY(-180deg) scaleX(1); }
+    45%  { transform: rotateY(-98deg)  scaleX(0.82); }
+    55%  { transform: rotateY(-92deg)  scaleX(0.82); }
+    100% { transform: rotateY(0deg)    scaleX(1); }
+}
+
+@keyframes leaf-shade {
+    0%   { opacity: 0; }
+    45%  { opacity: 0.9; }
+    55%  { opacity: 0.9; }
+    100% { opacity: 0; }
+}
+
+.leaf-cover .cover-face{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:46px 54px;
+    color:#fff;
+    background:
+        linear-gradient(180deg, rgba(10,8,7,.55) 0%, rgba(8,6,6,.72) 45%, rgba(4,3,3,.94) 100%),
+        url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=80");
+    background-size:cover;
+    background-position:center;
+    font-family:'Cormorant Garamond', Georgia, serif;
+}
+
+.cover-face::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(circle at 50% 28%,
+        rgba(216,180,107,.22),
+        transparent 58%),
+
+        linear-gradient(
+        to bottom,
+        rgba(0,0,0,.1),
+        rgba(0,0,0,.4),
+        rgba(0,0,0,.88));
+}
+
+/* золота рамка-паспарту, як у преміальних журналів */
+.cover-face::after{
+    content:"";
+    position:absolute;
+    inset:20px;
+    border:1px solid rgba(216,180,107,.55);
+    box-shadow:0 0 0 5px rgba(216,180,107,.09) inset;
+    pointer-events:none;
+    z-index:3;
+}
+
+.cover-face>*{
+    position:relative;
+    z-index:2;
+}
+
+/* верх */
+
+.cover-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    font-family:'Montserrat', sans-serif;
+    font-size:.66rem;
+    font-weight:500;
+    text-transform:uppercase;
+    letter-spacing:.34em;
+    color:#e7d3a6;
+    opacity:.92;
+}
+
+.cover-title-small,
+.cover-issue{
+    white-space:nowrap;
+    flex-shrink:0;
+}
+
+.cover-divider{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex:1 1 auto;
+    min-width:24px;
+}
+
+.cover-divider span{
+    flex:1 1 auto;
+    min-width:0;
+    max-width:140px;
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(216,180,107,.7), transparent);
+}
+
+.cover-divider i{
+    color:#d8b46b;
+    font-style:normal;
+}
+
+/* логотип */
+
+.cover-header{
+    text-align:center;
+    margin-top:6px;
+}
+
+.cover-logo{
+    margin:0;
+    font-family:'Bodoni Moda', 'Didot', Georgia, serif;
+    font-optical-sizing:auto;
+    font-size:clamp(76px,9.5vw,126px);
+    letter-spacing:.01em;
+    font-weight:800;
+    font-style:normal;
+    line-height:.86;
+    background:linear-gradient(180deg, #fdf3d9 0%, #e7c789 32%, #a97c3f 52%, #f4dca6 72%, #d8b46b 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 10px 30px rgba(0,0,0,.55);
+}
+
+.cover-slogan{
+    margin-top:18px;
+    color:#e9d3a3;
+    font-family:'Cormorant Garamond', Georgia, serif;
+    font-style:italic;
+    font-weight:500;
+    letter-spacing:.14em;
+    font-size:1.15rem;
+}
+
+/* середина */
+
+.cover-content{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-top:35px;
+}
+
+.cover-left{
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+    width:240px;
+}
+
+.feature{
+    display:flex;
+    gap:16px;
+}
+
+.feature-icon{
+    font-size:32px;
+    color:#d7aa60;
+}
+
+.feature h3{
+    margin:0;
+    color:#e4ba71;
+    font-size:1.8rem;
+}
+
+.feature p{
+    margin-top:6px;
+    color:white;
+    line-height:1.5;
+    opacity:.92;
+}
+
+.cover-right{
+    width:260px;
+    text-align:left;
+    color:white;
+    font-size:1.2rem;
+    line-height:1.7;
+}
+
+.quote-mark{
+    font-size:70px;
+    color:#d8b46b;
+    line-height:1;
+}
+
+.quote-mark.end{
+    text-align:right;
+}
+
+/* статистика*/
+
+.stats-panel{
+    margin-top:auto;
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+    gap:0;
+    position:relative;
+    border:1px solid rgba(216,180,107,.55);
+    border-radius:2px;
+    backdrop-filter:blur(14px);
+    background:linear-gradient(180deg, rgba(15,13,12,.6), rgba(6,5,5,.72));
+    overflow:hidden;
+}
+
+.stats-panel::before{
+    content:"";
+    position:absolute;
+    inset:5px;
+    border:1px solid rgba(216,180,107,.28);
+    pointer-events:none;
+}
+
+.stat{
+    padding:26px 12px 24px;
+    text-align:center;
+    border-right:1px solid rgba(216,180,107,.28);
+    min-width:0;
+    overflow:hidden;
+}
+
+.stat:last-child{
+    border:none;
+}
+
+.number{
+    display:block;
+    font-family:'Bodoni Moda', 'Didot', Georgia, serif;
+    font-weight:700;
+    font-size:52px;
+    line-height:1;
+    background:linear-gradient(180deg, #fdf3d9, #d8b46b 60%, #a97c3f);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+.stat.cat-movie .number{
+    background:linear-gradient(180deg, var(--col-movie-light), var(--col-movie) 60%, var(--col-movie-dark));
+    -webkit-background-clip:text;
+    background-clip:text;
+}
+
+.stat.cat-series .number{
+    background:linear-gradient(180deg, var(--col-series-light), var(--col-series) 60%, var(--col-series-dark));
+    -webkit-background-clip:text;
+    background-clip:text;
+}
+
+.stat.cat-cartoon .number{
+    background:linear-gradient(180deg, var(--col-cartoon-light), var(--col-cartoon) 60%, var(--col-cartoon-dark));
+    -webkit-background-clip:text;
+    background-clip:text;
+}
+
+.stat.cat-anime .number{
+    background:linear-gradient(180deg, var(--col-anime-light), var(--col-anime) 60%, var(--col-anime-dark));
+    -webkit-background-clip:text;
+    background-clip:text;
+}
+
+.label{
+    display:block;
+    margin-top:12px;
+    font-family:'Montserrat', sans-serif;
+    font-weight:500;
+    font-size:.68rem;
+    color:#cbb488;
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+/* низ */
+
+.cover-footer{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    justify-content:center;
+    margin-top:24px;
+}
+
+.cover-footer span{
+    width:140px;
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(216,180,107,.6), transparent);
+}
+
+.cover-footer p{
+    color:#e2cda0;
+    font-family:'Cormorant Garamond', Georgia, serif;
+    font-style:italic;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    font-size:.86rem;
+}
+
+/* Розворот (постер + опис) */
+
+.leaf-spread {
+    display: flex;
+}
+
+.leaf-spread .sheet {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    background: #0f0d0c;
+    position: relative;
+    backface-visibility: hidden;
+}
+
+.leaf-spread .left {
+    border-right: 1px solid rgba(216,180,107,.4);
+    box-shadow: inset -10px 0 16px -12px rgba(0, 0, 0, 0.6);
+}
+
+.leaf-spread .right {
+    border-left: 1px solid rgba(216,180,107,.4);
+    box-shadow: inset 10px 0 16px -12px rgba(0, 0, 0, 0.6);
+    background:
+        radial-gradient(circle at 85% 0%, rgba(216,180,107,.08), transparent 55%),
+        linear-gradient(160deg, #151312 0%, #0b0a09 100%);
+}
+
+.leaf-spread .poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(.92) contrast(1.05);
+}
+
+.leaf-spread .desc {
+    padding: 52px 42px;
+    color: #f1e6cf;
+}
+
+.title-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.cat-word {
+    font-weight: 600;
+}
+
+.cat-word.cat-movie{ color: var(--col-movie-light); }
+.cat-word.cat-series{ color: var(--col-series-light); }
+.cat-word.cat-cartoon{ color: var(--col-cartoon-light); }
+.cat-word.cat-anime{ color: var(--col-anime-light); }
+
+.leaf-spread .desc h2 {
+    margin: 0;
+    font-family: 'Bodoni Moda', 'Didot', Georgia, serif;
+    font-weight: 700;
+    font-size: 2.1rem;
+    letter-spacing: .01em;
+    background: linear-gradient(180deg, #fdf3d9, #d8b46b 65%, #a97c3f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.movie-year {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: .85rem;
+    letter-spacing: .16em;
+    color: #cbb488;
+    opacity: .85;
+}
+
+/* Глобальний перемикач перекладу — завжди у правому верхньому куті сторінки сайту */
+.translate-global {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    z-index: 2000;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: .64rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: #171412;
+    background: linear-gradient(180deg, #fdf3d9, #d8b46b 60%, #a97c3f);
+    border: none;
+    border-radius: 2px;
+    padding: 9px 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    transition: transform .2s, box-shadow .2s;
+}
+
+.translate-global:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(216,180,107,.4);
+}
+
+.leaf-spread .desc p {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.2rem;
+    line-height: 1.75;
+    color: #cbb99a;
+}
+
+.rating {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-top: 34px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(216,180,107,.32);
+}
+
+.rating-label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: .68rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: #cbb488;
+}
+
+.rating-value {
+    font-family: 'Bodoni Moda', 'Didot', Georgia, serif;
+    font-weight: 700;
+    font-size: 2.4rem;
+    line-height: 1;
+    background: linear-gradient(180deg, #fdf3d9, #d8b46b 60%, #a97c3f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.rating-max {
+    font-size: 1.2rem;
+    font-weight: 500;
+    opacity: .75;
+}
+
+/* Задня палітурка */
+
+.leaf-back .back-face {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 50% 40%, rgba(216,180,107,.1), transparent 60%),
+        linear-gradient(150deg, #0d0c0b 0%, #1c1815 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.back-monogram {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(216,180,107,.65);
+    box-shadow: 0 0 0 5px rgba(216,180,107,.08) inset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bodoni Moda', 'Didot', Georgia, serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    background: linear-gradient(180deg, #fdf3d9, #d8b46b 60%, #a97c3f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.back-tagline {
+    font-size: 0.95rem;
+    font-style: italic;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #d9c298;
+    opacity: 0.9;
+}
+
+.leaf-back .cover-barcode {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+@media (max-width: 500px) {
+    :root {
+        --magazine-w: 96vw;
+        --magazine-h: 72vh;
+    }
+
+    .cover-masthead {
+        font-size: 1.8rem;
+    }
+
+    .cover-stat-value {
+        font-size: 1.2rem;
+    }
+    .nav-arrow {
+        width: 44px;
+        height: 44px;
+        font-size: 1.4rem;
+    }
+    
+    .leaf-spread .desc {
+        padding: 20px 10px;
+        font-size: 0.95rem;
+    }
+}
