@@ -12,7 +12,10 @@
 <body>
 
 <div class="magazine-shell">
-    <button id="translate-global" class="translate-global" type="button">EN</button>
+    <div id="translate-global" class="lang-switch" role="group" aria-label="Мова сайту">
+        <button class="lang-option" data-lang="ua" type="button">UA</button>
+        <button class="lang-option" data-lang="en" type="button">EN</button>
+    </div>
     <div id="magazine" class="closed">
         <button id="magazine-close" class="magazine-close">✕</button>
         <div id="pages" class="pages">
@@ -80,7 +83,7 @@
             <div class="leaf leaf-spread" data-category="movie">
                 <div class="sheet left">
                     <img class="poster"
-                        src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=900&q=80">
+                        data-src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=900&q=80">
                 </div>
                 <div class="sheet right">
                     <div class="desc">
@@ -93,13 +96,41 @@
                         <p class="desc-text"
                             data-ua="Це фільм, у якому через постер, назву та концепцію символ маринованого огірочка використовується для уособлення збереження традиційних сімейних цінностей. Навіть Бен, придумуючи назву застосунку «BoopBop», мав на увазі, що «Boop» символізує батька, а «Bop» – матір."
                             data-en="Is a film that, through its poster, title, and concept, uses the symbol of a pickled cucumber to represent the preservation of traditional family values. Even Ben, in the idea behind the app name «BoopBop», meant «Boop» to be the father and «Bop» to be the mother."></p>
-                        <div class="rating">
-                            <span class="rating-label"
-                                data-ua="Оцінка"
-                                data-en="Rating"></span>
-                            <span class="rating-value">6<span class="rating-max">/10</span></span>
-                        </div>
                     </div>
+                </div>
+                <div class="rating">
+                    <span class="rating-label"
+                        data-ua="Оцінка"
+                        data-en="Rating"></span>
+                    <span class="rating-value">6<span class="rating-max">/10</span></span>
+                </div>
+            </div>
+
+<!-- 2 сторінка -->
+
+            <div class="leaf leaf-spread" data-category="movie">
+                <div class="sheet left">
+                    <img class="poster"
+                        src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=900&q=80">
+                </div>
+                <div class="sheet right">
+                    <div class="desc">
+                        <div class="title-row">
+                            <h2 class="movie-title"
+                                data-ua="Антарктида"
+                                data-en="Antarctica"></h2>
+                            <span class="movie-year">2025</span>
+                        </div>
+                        <p class="desc-text"
+                            data-ua="Це фільм про 30-ту"
+                            data-en="Is a film about the 30th Ukrainian Antarctic Expedition and life at the Akademik Vernadsky Station."></p>
+                    </div>
+                </div>
+                <div class="rating">
+                    <span class="rating-label"
+                        data-ua="Оцінка"
+                        data-en="Rating"></span>
+                    <span class="rating-value">10<span class="rating-max">/10</span></span>
                 </div>
             </div>
 

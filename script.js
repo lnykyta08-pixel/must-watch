@@ -43,6 +43,46 @@ function updateLeaves() {
     nextButton.disabled = flippedCount >= total - 1;
 
     localStorage.setItem(PAGE_STORAGE_KEY, flippedCount);
+
+    manageImageWindow();
+}
+
+// Фото "вікном": пам'ятаємо лише поточну сторінку та її сусідів (-1/+1),
+// решта фото забувається (src знімається), щоб не тримати зайве в пам'яті.
+
+function loadLeafImages(leaf) {
+    if (!leaf) return;
+
+    leaf.querySelectorAll("img[data-src]").forEach((img) => {
+        if (img.getAttribute("src") !== img.dataset.src) {
+            img.src = img.dataset.src;
+        }
+        img.classList.add("is-loaded");
+    });
+}
+
+function unloadLeafImages(leaf) {
+    if (!leaf) return;
+
+    leaf.querySelectorAll("img[data-src]").forEach((img) => {
+        if (img.hasAttribute("src")) {
+            img.removeAttribute("src");
+        }
+        img.classList.remove("is-loaded");
+    });
+}
+
+function manageImageWindow() {
+    const current = flippedCount;
+    const keep = new Set([current - 1, current, current + 1]);
+
+    leaves.forEach((leaf, i) => {
+        if (keep.has(i)) {
+            loadLeafImages(leaf);
+        } else {
+            unloadLeafImages(leaf);
+        }
+    });
 }
 
 function goNext() {
@@ -96,8 +136,6 @@ function goPrev() {
 nextButton.addEventListener("click", goNext);
 prevButton.addEventListener("click", goPrev);
 
-leavesContainer.addEventListener("click", goNext);
-
 closeButton.addEventListener("click", (e) => {
     e.stopPropagation();
 
@@ -108,7 +146,7 @@ closeButton.addEventListener("click", (e) => {
 // Перемикач мови сайту EN / UA
 // Слово "Must-Watch" (клас .brand і логотип .cover-logo) переклад не зачіпає.
 
-const translateButton = document.getElementById("translate-global");
+const langOptions = document.querySelectorAll(".lang-option");
 const LANG_STORAGE_KEY = "must-watch-current-lang";
 
 const savedLang = localStorage.getItem(LANG_STORAGE_KEY);
@@ -149,17 +187,24 @@ function applyLanguage(lang) {
         highlightCategoryWord(el, lang);
     });
 
-    // Кнопка показує мову, на яку можна перемкнутись
-    translateButton.textContent = lang === "ua" ? "EN" : "UA";
+    // Підсвічуємо активну опцію перемикача
+    langOptions.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+    });
 
     localStorage.setItem(LANG_STORAGE_KEY, lang);
 }
 
-translateButton.addEventListener("click", (e) => {
-    e.stopPropagation();
+langOptions.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+        e.stopPropagation();
 
-    currentLang = currentLang === "ua" ? "en" : "ua";
-    applyLanguage(currentLang);
+        const lang = btn.dataset.lang;
+        if (lang === currentLang) return;
+
+        currentLang = lang;
+        applyLanguage(currentLang);
+    });
 });
 
 applyLanguage(currentLang);
