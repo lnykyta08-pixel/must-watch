@@ -716,6 +716,8 @@ body {
     font-size: 1.2rem;
     font-weight: 500;
     opacity: .75;
+    color: #f1e6cf;
+    -webkit-text-fill-color: #f1e6cf;
 }
 
 /* Задня палітурка */
@@ -1060,9 +1062,11 @@ body {
         display: none;
     }
 
-    /* Фото зверху, текст під ним, оцінка — окремим рядком знизу, без накладання */
+    /* Фото на всю сторінку, текст і оцінка — на скляній панелі поверх фото знизу */
     .leaf-spread {
+        display: flex;
         flex-direction: column;
+        justify-content: flex-end;
     }
 
     .leaf-spread .sheet {
@@ -1070,11 +1074,11 @@ body {
     }
 
     .leaf-spread .left {
-        flex: 0 0 56%;
-        height: 56%;
-        border-right: none;
-        border-bottom: 1px solid rgba(216,180,107,.4);
-        box-shadow: inset 0 -14px 18px -14px rgba(0, 0, 0, 0.6);
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        border: none;
+        box-shadow: none;
     }
 
     .leaf-spread .poster {
@@ -1086,13 +1090,21 @@ body {
     }
 
     .leaf-spread .right {
-        flex: 1 1 auto;
+        position: relative;
+        z-index: 2;
         height: auto;
+        max-height: 62%;
         min-height: 0;
-        border-left: none;
+        border: none;
+        border-radius: 20px 20px 0 0;
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        background: rgba(18, 16, 15, 0.55);
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+        border-top: 1px solid rgba(216,180,107,.4);
+        box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.4);
     }
 
     .leaf-spread .desc {
@@ -1112,18 +1124,21 @@ body {
         line-height: 1.5;
     }
 
-    /* Оцінка — окремим компактним рядком під текстом, не поверх нього */
+    /* Оцінка — окремим рядком на тій самій скляній панелі знизу */
     .rating {
-        position: static;
+        position: relative;
+        z-index: 2;
         flex: 0 0 auto;
         width: 100%;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
         gap: 10px;
-        padding: 10px 16px;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom)) 16px;
         border-top: 1px solid rgba(216,180,107,.32);
-        background: rgba(10, 9, 8, 0.85);
+        background: rgba(12, 10, 9, 0.7);
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
     }
 
     .rating-value {
