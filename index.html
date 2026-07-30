@@ -17,7 +17,6 @@
         <button class="lang-option" data-lang="en" type="button">EN</button>
     </div>
     <div id="magazine" class="closed">
-        <button id="magazine-close" class="magazine-close">✕</button>
         <div id="pages" class="pages">
 
 <!-- Обкладинка -->
@@ -78,12 +77,24 @@
                 </div>
             </div>
 
+<!-- Зміст -->
+
+            <div class="leaf leaf-contents">
+                <div class="contents-face">
+                    <h2 class="contents-title"
+                        data-ua="Зміст"
+                        data-en="Contents"></h2>
+                    <div id="contents-grid" class="contents-grid"></div>
+                </div>
+            </div>
+
 <!-- 1 сторінка -->
 
             <div class="leaf leaf-spread" data-category="movie">
                 <div class="sheet left">
                     <img class="poster"
-                        data-src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=900&q=80">
+                        data-src-ua="American_Pickle.webp"
+                        data-src-en="American_Pickle.webp">
                 </div>
                 <div class="sheet right">
                     <div class="desc">
@@ -111,7 +122,8 @@
             <div class="leaf leaf-spread" data-category="movie">
                 <div class="sheet left">
                     <img class="poster"
-                        src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=900&q=80">
+                        data-src-ua="Antarctica_ua.webp"
+                        data-src-en="Antarctica_eng.webp">
                 </div>
                 <div class="sheet right">
                     <div class="desc">
@@ -134,6 +146,64 @@
                 </div>
             </div>
 
+<!-- 3 сторінка -->
+
+            <div class="leaf leaf-spread" data-category="movie">
+                <div class="sheet left">
+                    <img class="poster"
+                        data-src-ua="About_Time_ua.webp"
+                        data-src-en="About_Time_eng.webp">
+                </div>
+                <div class="sheet right">
+                    <div class="desc">
+                        <div class="title-row">
+                            <h2 class="movie-title"
+                                data-ua="Коханий з Майбутнього"
+                                data-en="About Time"></h2>
+                            <span class="movie-year">2013</span>
+                        </div>
+                        <p class="desc-text"
+                            data-ua="..."
+                            data-en="..."></p>
+                    </div>
+                </div>
+                <div class="rating">
+                    <span class="rating-label"
+                        data-ua="Оцінка"
+                        data-en="Rating"></span>
+                    <span class="rating-value">8<span class="rating-max">/10</span></span>
+                </div>
+            </div>
+
+<!-- 4 сторінка -->
+
+            <div class="leaf leaf-spread" data-category="movie">
+                <div class="sheet left">
+                    <img class="poster"
+                        data-src-ua="Arrietty_ua.webp"
+                        data-src-en="Arrietty_eng.webp">
+                </div>
+                <div class="sheet right">
+                    <div class="desc">
+                        <div class="title-row">
+                            <h2 class="movie-title"
+                                data-ua="Позичайка Аріетті"
+                                data-en="Arrietty"></h2>
+                            <span class="movie-year">2010</span>
+                        </div>
+                        <p class="desc-text"
+                            data-ua="..."
+                            data-en="..."></p>
+                    </div>
+                </div>
+                <div class="rating">
+                    <span class="rating-label"
+                        data-ua="Оцінка"
+                        data-en="Rating"></span>
+                    <span class="rating-value">8<span class="rating-max">/10</span></span>
+                </div>
+            </div>
+
 <!-- Задня палітурка -->
 
             <div class="leaf leaf-back">
@@ -149,6 +219,20 @@
     <div class="magazine-nav">
         <button id="nav-prev" class="nav-arrow">‹</button>
         <button id="nav-next" class="nav-arrow">›</button>
+    </div>
+    <div id="side-menu" class="side-menu" role="group" aria-label="Навігація журналом">
+        <button id="menu-contents" class="side-menu-btn" type="button">
+            <span class="side-menu-icon">☰</span>
+            <span class="side-menu-label"
+                data-ua="Зміст"
+                data-en="Contents"></span>
+        </button>
+        <button id="menu-home" class="side-menu-btn" type="button">
+            <span class="side-menu-icon">⌂</span>
+            <span class="side-menu-label"
+                data-ua="Головна"
+                data-en="Home"></span>
+        </button>
     </div>
 </div>
 

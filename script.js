@@ -1,8 +1,9 @@
 const magazine = document.getElementById("magazine");
 const leavesContainer = document.getElementById("pages");
-const closeButton = document.getElementById("magazine-close");
 const prevButton = document.getElementById("nav-prev");
 const nextButton = document.getElementById("nav-next");
+const menuContentsButton = document.getElementById("menu-contents");
+const menuHomeButton = document.getElementById("menu-home");
 
 let leaves = [];
 let flippedCount = 0;
@@ -50,12 +51,21 @@ function updateLeaves() {
 // Фото "вікном": пам'ятаємо лише поточну сторінку та її сусідів (-1/+1),
 // решта фото забувається (src знімається), щоб не тримати зайве в пам'яті.
 
+function getLangSrc(img) {
+    // Бере фото під поточну мову; якщо для цієї мови окремого фото
+    // не задано — підстраховується варіантом іншої мови.
+    return currentLang === "ua"
+        ? (img.dataset.srcUa || img.dataset.srcEn)
+        : (img.dataset.srcEn || img.dataset.srcUa);
+}
+
 function loadLeafImages(leaf) {
     if (!leaf) return;
 
-    leaf.querySelectorAll("img[data-src]").forEach((img) => {
-        if (img.getAttribute("src") !== img.dataset.src) {
-            img.src = img.dataset.src;
+    leaf.querySelectorAll("img[data-src-ua], img[data-src-en]").forEach((img) => {
+        const wanted = getLangSrc(img);
+        if (wanted && img.getAttribute("src") !== wanted) {
+            img.src = wanted;
         }
         img.classList.add("is-loaded");
     });
@@ -64,7 +74,7 @@ function loadLeafImages(leaf) {
 function unloadLeafImages(leaf) {
     if (!leaf) return;
 
-    leaf.querySelectorAll("img[data-src]").forEach((img) => {
+    leaf.querySelectorAll("img[data-src-ua], img[data-src-en]").forEach((img) => {
         if (img.hasAttribute("src")) {
             img.removeAttribute("src");
         }
@@ -83,6 +93,104 @@ function manageImageWindow() {
             unloadLeafImages(leaf);
         }
     });
+}
+
+// Сторінка "Зміст": абетка своя під кожну мову, "#" завжди в кінці —
+// для назв, що починаються не з букви цієї абетки.
+
+function getAlphabet(lang) {
+    return lang === "ua"
+        ? "АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ".split("")
+        : "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+}
+
+function getMovieLeaves() {
+    return leaves
+        .map((leaf, index) => ({ leaf, index }))
+        .filter(({ leaf }) => leaf.classList.contains("leaf-spread"));
+}
+
+function renderContents(lang) {
+    const container = document.getElementById("contents-grid");
+    if (!container || !leaves.length) return;
+
+    const alphabet = getAlphabet(lang);
+    const groups = new Map(); // літера -> [{title, index}]
+    const hashGroup = [];
+
+    getMovieLeaves().forEach(({ leaf, index }) => {
+        const titleEl = leaf.querySelector(".movie-title");
+        if (!titleEl) return;
+
+        const title = (lang === "ua" ? titleEl.dataset.ua : titleEl.dataset.en) || "";
+        const firstChar = title.trim().charAt(0).toUpperCase();
+        const entry = { title, index };
+
+        if (alphabet.includes(firstChar)) {
+            if (!groups.has(firstChar)) groups.set(firstChar, []);
+            groups.get(firstChar).push(entry);
+        } else {
+            hashGroup.push(entry);
+        }
+    });
+
+    container.innerHTML = "";
+
+    // Показуємо лише ті літери, під якими справді є записи —
+    // у порядку абетки поточної мови.
+    alphabet.forEach((letter) => {
+        if (groups.has(letter)) {
+            container.appendChild(buildContentsSection(letter, groups.get(letter)));
+        }
+    });
+
+    // "#" — завжди останнім, і лише якщо є назви, що починаються не з букви
+    if (hashGroup.length) {
+        container.appendChild(buildContentsSection("#", hashGroup));
+    }
+}
+
+function buildContentsSection(letter, entries) {
+    const section = document.createElement("div");
+    section.className = "contents-section";
+
+    const heading = document.createElement("div");
+    heading.className = "contents-letter-heading";
+    heading.textContent = letter;
+    section.appendChild(heading);
+
+    entries.forEach(({ title, index }) => {
+        const row = document.createElement("div");
+        row.className = "contents-entry";
+
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "entry-title";
+        titleSpan.textContent = title;
+
+        const leader = document.createElement("span");
+        leader.className = "entry-leader";
+
+        const page = document.createElement("span");
+        page.className = "entry-page";
+        page.textContent = String(index).padStart(2, "0");
+
+        row.append(titleSpan, leader, page);
+        row.addEventListener("click", (e) => {
+            e.stopPropagation();
+            jumpToLeaf(index);
+        });
+
+        section.appendChild(row);
+    });
+
+    return section;
+}
+
+function jumpToLeaf(index) {
+    if (isAnimating || index < 0 || index >= leaves.length) return;
+
+    flippedCount = index;
+    updateLeaves();
 }
 
 function goNext() {
@@ -136,11 +244,23 @@ function goPrev() {
 nextButton.addEventListener("click", goNext);
 prevButton.addEventListener("click", goPrev);
 
-closeButton.addEventListener("click", (e) => {
+menuHomeButton.addEventListener("click", (e) => {
     e.stopPropagation();
 
     flippedCount = 0;
     updateLeaves();
+});
+
+menuContentsButton.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    const contentsIndex = leaves.findIndex((leaf) =>
+        leaf.classList.contains("leaf-contents")
+    );
+
+    if (contentsIndex !== -1) {
+        jumpToLeaf(contentsIndex);
+    }
 });
 
 // Перемикач мови сайту EN / UA
@@ -193,6 +313,13 @@ function applyLanguage(lang) {
     });
 
     localStorage.setItem(LANG_STORAGE_KEY, lang);
+
+    // Підміняємо фото на поточній/сусідніх сторінках під нову мову
+    // і перебудовуємо абетку "Зміст" під нову мову
+    if (leaves.length) {
+        manageImageWindow();
+        renderContents(lang);
+    }
 }
 
 langOptions.forEach((btn) => {
@@ -207,6 +334,5 @@ langOptions.forEach((btn) => {
     });
 });
 
-applyLanguage(currentLang);
-
 buildLeaves();
+applyLanguage(currentLang);

@@ -36,12 +36,6 @@
     box-shadow: 0 4px 24px rgba(0,0,0,0.18);
 }
 
-.magazine-close {
-    top: 24px;
-    right: 24px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
-}
-
 .magazine-shell {
     position: relative;
     margin-top: 40px;
@@ -110,38 +104,6 @@ body {
     position: relative;
     cursor: default;
     overflow: hidden;
-}
-
-/* Кнопка закриття */
-
-.magazine-close {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(0, 0, 0, 0.55);
-    color: #fff;
-    font-size: 1.1rem;
-    line-height: 1;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-    transition: background 0.2s, transform 0.2s;
-}
-
-.magazine-close:hover {
-    background: rgba(0, 0, 0, 0.75);
-    transform: scale(1.08);
-}
-
-#magazine:not(.closed) .magazine-close {
-    display: flex;
 }
 
 /* Стрілки навігації */
@@ -736,6 +698,181 @@ body {
 
 /* Задня палітурка */
 
+/* Сторінка "Зміст" — абетка-навігація */
+
+.leaf-contents .contents-face {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 54px 50px 46px;
+    color: #f1e6cf;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(216,180,107,.1), transparent 55%),
+        linear-gradient(160deg, #151312 0%, #0b0a09 100%);
+}
+
+.contents-title {
+    margin: 0 0 34px 0;
+    font-family: 'Bodoni Moda', 'Didot', Georgia, serif;
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: .02em;
+    background: linear-gradient(180deg, #fdf3d9, #d8b46b 65%, #a97c3f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    flex-shrink: 0;
+}
+
+.contents-grid {
+    width: 100%;
+    max-width: 460px;
+    overflow-y: auto;
+    text-align: left;
+    padding-right: 6px;
+}
+
+.contents-grid::-webkit-scrollbar {
+    width: 4px;
+}
+
+.contents-grid::-webkit-scrollbar-thumb {
+    background: rgba(216,180,107,.35);
+    border-radius: 2px;
+}
+
+.contents-section {
+    margin-bottom: 28px;
+}
+
+.contents-section:last-child {
+    margin-bottom: 0;
+}
+
+.contents-letter-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 12px;
+    font-family: 'Bodoni Moda', 'Didot', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: .03em;
+    background: linear-gradient(180deg, #fdf3d9, #d8b46b 65%, #a97c3f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.contents-letter-heading::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    align-self: center;
+    background: linear-gradient(90deg, rgba(216,180,107,.55), transparent);
+}
+
+.contents-entry {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 7px 2px;
+    cursor: pointer;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.08rem;
+    color: #cbb99a;
+    transition: color .2s;
+}
+
+.contents-entry:hover {
+    color: #f1e6cf;
+}
+
+.contents-entry:hover .entry-page {
+    color: #fdf3d9;
+}
+
+.entry-title {
+    flex: 0 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.entry-leader {
+    flex: 1 1 auto;
+    min-width: 16px;
+    border-bottom: 1px dotted rgba(216,180,107,.4);
+    margin-bottom: 5px;
+}
+
+.entry-page {
+    flex: 0 0 auto;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: .82rem;
+    letter-spacing: .06em;
+    color: #d8b46b;
+    transition: color .2s;
+}
+
+/* Бокове меню навігації — фіксоване з правого краю сайту */
+
+.side-menu {
+    position: fixed;
+    top: 50%;
+    right: 28px;
+    transform: translateY(-50%);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px;
+    background: rgba(20, 18, 16, 0.72);
+    border: 1px solid rgba(216,180,107,.4);
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+}
+
+.side-menu-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 10px;
+    cursor: pointer;
+    color: #cbb488;
+    transition: color .2s, background .2s;
+}
+
+.side-menu-btn:hover {
+    color: #f1e6cf;
+    background: rgba(216,180,107,.12);
+}
+
+.side-menu-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.side-menu-label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: .58rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
 .leaf-back .back-face {
     position: relative;
     width: 100%;
@@ -808,5 +945,23 @@ body {
     .leaf-spread .desc {
         padding: 20px 10px;
         font-size: 0.95rem;
+    }
+
+    .side-menu {
+        right: 8px;
+        gap: 2px;
+        padding: 4px;
+    }
+
+    .side-menu-btn {
+        padding: 8px 6px;
+    }
+
+    .side-menu-icon {
+        font-size: 1rem;
+    }
+
+    .side-menu-label {
+        font-size: .5rem;
     }
 }
