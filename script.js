@@ -306,9 +306,56 @@ function buildContentsSection(letter, entries, lang) {
 function jumpToLeaf(index) {
     if (isAnimating || index < 0 || index >= leaves.length) return;
 
+    closeMovieInfo();
+
     flippedCount = index;
     updateLeaves();
 }
+
+// Спливаюче вікно з описом фільму (мобільна версія)
+const infoOverlay = document.getElementById("info-overlay");
+
+function openMovieInfo(leafSpread) {
+    if (!leafSpread) return;
+    closeMovieInfo();
+    leafSpread.classList.add("movie-info-open");
+    document.body.classList.add("movie-info-open");
+}
+
+function closeMovieInfo() {
+    document.querySelectorAll(".leaf-spread.movie-info-open").forEach((leaf) => {
+        leaf.classList.remove("movie-info-open");
+    });
+    document.body.classList.remove("movie-info-open");
+}
+
+leavesContainer.addEventListener("click", (e) => {
+    const infoBtn = e.target.closest(".info-btn");
+    if (infoBtn) {
+        e.stopPropagation();
+        const leafSpread = infoBtn.closest(".leaf-spread");
+        if (leafSpread.classList.contains("movie-info-open")) {
+            closeMovieInfo();
+        } else {
+            openMovieInfo(leafSpread);
+        }
+        return;
+    }
+
+    const closeBtn = e.target.closest(".info-close");
+    if (closeBtn) {
+        e.stopPropagation();
+        closeMovieInfo();
+    }
+});
+
+if (infoOverlay) {
+    infoOverlay.addEventListener("click", () => closeMovieInfo());
+}
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMovieInfo();
+});
 
 nextButton.addEventListener("click", () => jumpToLeaf(flippedCount + 1));
 prevButton.addEventListener("click", () => jumpToLeaf(flippedCount - 1));
@@ -345,6 +392,7 @@ magazine.addEventListener("touchend", (e) => {
 menuHomeButton.addEventListener("click", (e) => {
     e.stopPropagation();
 
+    closeMovieInfo();
     flippedCount = 0;
     updateLeaves();
 
