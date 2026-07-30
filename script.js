@@ -310,56 +310,8 @@ function jumpToLeaf(index) {
     updateLeaves();
 }
 
-function goNext() {
-    if (isAnimating || flippedCount >= leaves.length - 1) return;
-
-    isAnimating = true;
-
-    const leaf = leaves[flippedCount];
-
-    leaf.classList.add("flipping", "anim-forward");
-
-    flippedCount++;
-    updateLeaves();
-
-    setTimeout(() => {
-        leaf.classList.remove(
-            "flipping",
-            "anim-forward"
-        );
-
-        isAnimating = false;
-    }, 1000);
-}
-
-function goPrev() {
-    if (isAnimating || flippedCount <= 0) return;
-
-    isAnimating = true;
-
-    flippedCount--;
-
-    const leaf = leaves[flippedCount];
-
-    leaf.classList.add(
-        "flipping",
-        "anim-backward"
-    );
-
-    updateLeaves();
-
-    setTimeout(() => {
-        leaf.classList.remove(
-            "flipping",
-            "anim-backward"
-        );
-
-        isAnimating = false;
-    }, 1000);
-}
-
-nextButton.addEventListener("click", goNext);
-prevButton.addEventListener("click", goPrev);
+nextButton.addEventListener("click", () => jumpToLeaf(flippedCount + 1));
+prevButton.addEventListener("click", () => jumpToLeaf(flippedCount - 1));
 
 // Свайп для гортання сторінок на тф (замінює стрілки, які там приховані)
 const SWIPE_MIN_DISTANCE = 45;
