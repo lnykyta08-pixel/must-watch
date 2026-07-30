@@ -59,6 +59,10 @@ function fitAllTitles() {
     document.querySelectorAll(".movie-title").forEach(fitTitleFont);
 }
 
+if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => fitAllTitles());
+}
+
 let titleFitResizeTimeout = null;
 window.addEventListener("resize", () => {
     clearTimeout(titleFitResizeTimeout);
