@@ -361,6 +361,34 @@ function goPrev() {
 nextButton.addEventListener("click", goNext);
 prevButton.addEventListener("click", goPrev);
 
+// Свайп для гортання сторінок на тф (замінює стрілки, які там приховані)
+const SWIPE_MIN_DISTANCE = 45;
+const SWIPE_MAX_OFF_AXIS = 60;
+let touchStartX = 0;
+let touchStartY = 0;
+
+magazine.addEventListener("touchstart", (e) => {
+    if (e.touches.length !== 1) return;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+magazine.addEventListener("touchend", (e) => {
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+
+    const dx = touch.clientX - touchStartX;
+    const dy = touch.clientY - touchStartY;
+
+    if (Math.abs(dx) < SWIPE_MIN_DISTANCE || Math.abs(dy) > SWIPE_MAX_OFF_AXIS) return;
+
+    if (dx < 0) {
+        goNext();
+    } else {
+        goPrev();
+    }
+}, { passive: true });
+
 menuHomeButton.addEventListener("click", (e) => {
     e.stopPropagation();
 

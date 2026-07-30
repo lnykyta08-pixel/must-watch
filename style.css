@@ -1052,13 +1052,13 @@ body {
     .cover-stat-value {
         font-size: 1.2rem;
     }
-    .nav-arrow {
-        width: 44px;
-        height: 44px;
-        font-size: 1.4rem;
+
+    /* Стрілки прибираємо з екрана — гортання на тф робимо свайпом */
+    .magazine-nav {
+        display: none;
     }
 
-    /* Фото зверху, текст під ним, на всю ширину екрана */
+    /* Фото зверху, текст під ним, оцінка — окремим рядком знизу, без накладання */
     .leaf-spread {
         flex-direction: column;
     }
@@ -1068,38 +1068,63 @@ body {
     }
 
     .leaf-spread .left {
-        height: 42%;
+        flex: 0 0 38%;
+        height: 38%;
         border-right: none;
         border-bottom: 1px solid rgba(216,180,107,.4);
         box-shadow: inset 0 -14px 18px -14px rgba(0, 0, 0, 0.6);
     }
 
+    .leaf-spread .poster {
+        object-position: center 22%;
+    }
+
+    .leaf-spread .poster[src="All_Quiet_on_the_Western_Front_eng.webp"] {
+        object-position: center 80%;
+    }
+
     .leaf-spread .right {
-        height: 58%;
+        flex: 1 1 auto;
+        height: auto;
+        min-height: 0;
         border-left: none;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .leaf-spread .desc {
+        padding: 18px 16px 14px 16px;
+        flex: 1 1 auto;
+        min-height: 0;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
 
-    .leaf-spread .desc {
-        padding: 20px 16px 76px 16px;
-    }
-
     .leaf-spread .desc h2 {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
 
     .leaf-spread .desc p {
-        font-size: 0.95rem;
-        line-height: 1.55;
+        font-size: 0.92rem;
+        line-height: 1.5;
     }
 
+    /* Оцінка — окремим компактним рядком під текстом, не поверх нього */
     .rating {
-        right: 16px;
-        bottom: 16px;
+        position: static;
+        flex: 0 0 auto;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 16px;
+        border-top: 1px solid rgba(216,180,107,.32);
+        background: rgba(10, 9, 8, 0.85);
     }
 
     .rating-value {
-        font-size: 1.7rem;
+        font-size: 1.5rem;
     }
 }
