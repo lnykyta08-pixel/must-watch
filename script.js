@@ -20,6 +20,108 @@ function buildLeaves() {
         : 0;
 
     updateLeaves();
+    updateStatsPanel();
+    initStatsPanelInteraction();
+    fitAllTitles();
+}
+
+const TITLE_MIN_SCALE = 0.62;
+const TITLE_STEP_PX = 1;
+
+function fitTitleFont(titleEl) {
+    if (!titleEl) return;
+
+    if (!titleEl.dataset.baseFontSize) {
+        titleEl.dataset.baseFontSize = parseFloat(getComputedStyle(titleEl).fontSize);
+    }
+
+    const baseFontSize = parseFloat(titleEl.dataset.baseFontSize);
+    const minFontSize = baseFontSize * TITLE_MIN_SCALE;
+
+    let fontSize = baseFontSize;
+    titleEl.style.fontSize = fontSize + "px";
+
+    const prevWhiteSpace = titleEl.style.whiteSpace;
+    titleEl.style.whiteSpace = "nowrap";
+
+    while (
+        titleEl.scrollWidth > titleEl.clientWidth &&
+        fontSize > minFontSize
+    ) {
+        fontSize -= TITLE_STEP_PX;
+        titleEl.style.fontSize = fontSize + "px";
+    }
+
+    titleEl.style.whiteSpace = prevWhiteSpace || "";
+}
+
+function fitAllTitles() {
+    document.querySelectorAll(".movie-title").forEach(fitTitleFont);
+}
+
+let titleFitResizeTimeout = null;
+window.addEventListener("resize", () => {
+    clearTimeout(titleFitResizeTimeout);
+    titleFitResizeTimeout = setTimeout(fitAllTitles, 150);
+});
+
+function computeCategoryCounts() {
+    const counts = { movie: 0, series: 0, cartoon: 0, anime: 0 };
+
+    leaves.forEach((leaf) => {
+        const category = leaf.dataset.category;
+        if (category && Object.prototype.hasOwnProperty.call(counts, category)) {
+            counts[category]++;
+        }
+    });
+
+    return counts;
+}
+
+function getStatCategory(statEl) {
+    const catClass = Array.from(statEl.classList).find((c) => c.startsWith("cat-"));
+    return catClass ? catClass.replace("cat-", "") : null;
+}
+
+function updateStatsPanel() {
+    const counts = computeCategoryCounts();
+
+    document.querySelectorAll(".stats-panel .stat").forEach((statEl) => {
+        const category = getStatCategory(statEl);
+        if (!category) return;
+
+        const numberEl = statEl.querySelector(".number");
+        if (numberEl && Object.prototype.hasOwnProperty.call(counts, category)) {
+            numberEl.textContent = counts[category];
+        }
+    });
+}
+
+function jumpToCategory(category) {
+    const index = leaves.findIndex((leaf) => leaf.dataset.category === category);
+    if (index !== -1) jumpToLeaf(index);
+}
+
+function initStatsPanelInteraction() {
+    document.querySelectorAll(".stats-panel .stat").forEach((statEl) => {
+        const category = getStatCategory(statEl);
+        if (!category) return;
+
+        statEl.setAttribute("role", "button");
+        statEl.setAttribute("tabindex", "0");
+
+        statEl.addEventListener("click", (e) => {
+            e.stopPropagation();
+            jumpToCategory(category);
+        });
+
+        statEl.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                jumpToCategory(category);
+            }
+        });
+    });
 }
 
 function updateLeaves() {
@@ -48,12 +150,7 @@ function updateLeaves() {
     manageImageWindow();
 }
 
-// Фото "вікном": пам'ятаємо лише поточну сторінку та її сусідів (-1/+1),
-// решта фото забувається (src знімається), щоб не тримати зайве в пам'яті.
-
 function getLangSrc(img) {
-    // Бере фото під поточну мову; якщо для цієї мови окремого фото
-    // не задано — підстраховується варіантом іншої мови.
     return currentLang === "ua"
         ? (img.dataset.srcUa || img.dataset.srcEn)
         : (img.dataset.srcEn || img.dataset.srcUa);
@@ -95,9 +192,6 @@ function manageImageWindow() {
     });
 }
 
-// Сторінка "Зміст": абетка своя під кожну мову, "#" завжди в кінці —
-// для назв, що починаються не з букви цієї абетки.
-
 function getAlphabet(lang) {
     return lang === "ua"
         ? "АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ".split("")
@@ -115,7 +209,7 @@ function renderContents(lang) {
     if (!container || !leaves.length) return;
 
     const alphabet = getAlphabet(lang);
-    const groups = new Map(); // літера -> [{title, index}]
+    const groups = new Map();
     const hashGroup = [];
 
     getMovieLeaves().forEach(({ leaf, index }) => {
@@ -124,7 +218,8 @@ function renderContents(lang) {
 
         const title = (lang === "ua" ? titleEl.dataset.ua : titleEl.dataset.en) || "";
         const firstChar = title.trim().charAt(0).toUpperCase();
-        const entry = { title, index };
+        const category = leaf.dataset.category || "";
+        const entry = { title, index, category };
 
         if (alphabet.includes(firstChar)) {
             if (!groups.has(firstChar)) groups.set(firstChar, []);
@@ -136,27 +231,46 @@ function renderContents(lang) {
 
     container.innerHTML = "";
 
-    // Показуємо лише ті літери, під якими справді є записи —
-    // у порядку абетки поточної мови.
     alphabet.forEach((letter) => {
         if (groups.has(letter)) {
-            container.appendChild(buildContentsSection(letter, groups.get(letter)));
+            container.appendChild(buildContentsSection(letter, groups.get(letter), lang));
         }
     });
 
-    // "#" — завжди останнім, і лише якщо є назви, що починаються не з букви
     if (hashGroup.length) {
-        container.appendChild(buildContentsSection("#", hashGroup));
+        container.appendChild(buildContentsSection("#", hashGroup, lang));
     }
 }
 
-function buildContentsSection(letter, entries) {
+const CATEGORY_CODE = {
+    en: { movie: "F", series: "S", cartoon: "C", anime: "A" },
+    ua: { movie: "К", series: "С", cartoon: "М", anime: "А" },
+};
+
+function buildLetterCode(entries, lang) {
+    const codeMap = CATEGORY_CODE[lang] || CATEGORY_CODE.en;
+    const order = ["movie", "series", "cartoon", "anime"];
+
+    const counts = {};
+    order.forEach((cat) => { counts[cat] = 0; });
+
+    entries.forEach(({ category }) => {
+        if (Object.prototype.hasOwnProperty.call(counts, category)) {
+            counts[category] += 1;
+        }
+    });
+
+    const parts = order.map((cat) => `${codeMap[cat]}${counts[cat]}`);
+    return `(${parts.join("; ")})`;
+}
+
+function buildContentsSection(letter, entries, lang) {
     const section = document.createElement("div");
     section.className = "contents-section";
 
     const heading = document.createElement("div");
     heading.className = "contents-letter-heading";
-    heading.textContent = letter;
+    heading.textContent = `${letter} ${buildLetterCode(entries, lang)}`;
     section.appendChild(heading);
 
     entries.forEach(({ title, index }) => {
@@ -263,17 +377,12 @@ menuContentsButton.addEventListener("click", (e) => {
     }
 });
 
-// Перемикач мови сайту EN / UA
-// Слово "Must-Watch" (клас .brand і логотип .cover-logo) переклад не зачіпає.
-
 const langOptions = document.querySelectorAll(".lang-option");
 const LANG_STORAGE_KEY = "must-watch-current-lang";
 
 const savedLang = localStorage.getItem(LANG_STORAGE_KEY);
-let currentLang = savedLang === "en" ? "en" : "ua"; // мова за замовчуванням — ua
+let currentLang = savedLang === "en" ? "en" : "ua";
 
-// Слова категорій для автоматичної підсвітки в тексті опису.
-// Додаєш data-category="series|cartoon|anime" на .leaf-spread — і слово підсвітиться саме.
 const categoryWords = {
     movie: { ua: "фільм", en: "film" },
     series: { ua: "серіал", en: "series" },
@@ -307,19 +416,18 @@ function applyLanguage(lang) {
         highlightCategoryWord(el, lang);
     });
 
-    // Підсвічуємо активну опцію перемикача
     langOptions.forEach((btn) => {
         btn.classList.toggle("active", btn.dataset.lang === lang);
     });
 
     localStorage.setItem(LANG_STORAGE_KEY, lang);
 
-    // Підміняємо фото на поточній/сусідніх сторінках під нову мову
-    // і перебудовуємо абетку "Зміст" під нову мову
     if (leaves.length) {
         manageImageWindow();
         renderContents(lang);
     }
+
+    fitAllTitles();
 }
 
 langOptions.forEach((btn) => {
