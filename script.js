@@ -242,6 +242,9 @@ function renderContents(lang) {
     }
 }
 
+// Категорія -> літера коду, окремо для кожної мови
+// EN: F = film, S = series, C = cartoon, A = anime
+// UA: К = кіно, С = серіали, М = мультфільми, А = аніме
 const CATEGORY_CODE = {
     en: { movie: "F", series: "S", cartoon: "C", anime: "A" },
     ua: { movie: "К", series: "С", cartoon: "М", anime: "А" },
@@ -363,6 +366,8 @@ menuHomeButton.addEventListener("click", (e) => {
 
     flippedCount = 0;
     updateLeaves();
+
+    document.body.classList.remove("mobile-menu-open");
 });
 
 menuContentsButton.addEventListener("click", (e) => {
@@ -375,6 +380,8 @@ menuContentsButton.addEventListener("click", (e) => {
     if (contentsIndex !== -1) {
         jumpToLeaf(contentsIndex);
     }
+
+    document.body.classList.remove("mobile-menu-open");
 });
 
 const langOptions = document.querySelectorAll(".lang-option");
@@ -435,12 +442,39 @@ langOptions.forEach((btn) => {
         e.stopPropagation();
 
         const lang = btn.dataset.lang;
-        if (lang === currentLang) return;
+        if (lang !== currentLang) {
+            currentLang = lang;
+            applyLanguage(currentLang);
+        }
 
-        currentLang = lang;
-        applyLanguage(currentLang);
+        document.body.classList.remove("mobile-menu-open");
     });
 });
+
+const mobileMenuToggle = document.getElementById("mobile-menu-toggle");
+
+if (mobileMenuToggle) {
+    mobileMenuToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.body.classList.toggle("mobile-menu-open");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!document.body.classList.contains("mobile-menu-open")) return;
+
+        const langSwitch = document.getElementById("translate-global");
+        const sideMenu = document.getElementById("side-menu");
+
+        const clickedInside =
+            mobileMenuToggle.contains(e.target) ||
+            (langSwitch && langSwitch.contains(e.target)) ||
+            (sideMenu && sideMenu.contains(e.target));
+
+        if (!clickedInside) {
+            document.body.classList.remove("mobile-menu-open");
+        }
+    });
+}
 
 buildLeaves();
 applyLanguage(currentLang);

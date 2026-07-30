@@ -663,6 +663,11 @@ body {
     transform: translateY(-1px);
 }
 
+/* Кнопка-гамбургер для мобільної версії (приховано на десктопі) */
+.mobile-menu-toggle {
+    display: none;
+}
+
 .leaf-spread .desc p {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.2rem;
@@ -964,9 +969,80 @@ body {
         border-radius: 0;
     }
 
-    .lang-switch {
+    /* Переклад, зміст і головна ховаються в одну кнопку */
+    .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
         top: 10px;
         right: 10px;
+        width: 40px;
+        height: 40px;
+        z-index: 2100;
+        font-size: 1.2rem;
+        color: #cbb488;
+        background: rgba(20, 18, 16, 0.72);
+        border: 1px solid rgba(216,180,107,.4);
+        border-radius: 8px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(6px);
+        cursor: pointer;
+        transition: color .2s, transform .2s;
+    }
+
+    body.mobile-menu-open .mobile-menu-toggle {
+        color: #f1e6cf;
+        transform: rotate(90deg);
+    }
+
+    .lang-switch,
+    .side-menu {
+        display: none;
+    }
+
+    body.mobile-menu-open .lang-switch,
+    body.mobile-menu-open .side-menu {
+        display: flex;
+    }
+
+    .lang-switch {
+        position: fixed;
+        top: 56px;
+        right: 10px;
+        transform: none;
+        flex-direction: row;
+        z-index: 2100;
+        animation: mobile-menu-pop .18s ease;
+    }
+
+    .side-menu {
+        position: fixed;
+        top: 106px;
+        right: 10px;
+        transform: none;
+        flex-direction: column;
+        z-index: 2100;
+        animation: mobile-menu-pop .18s ease;
+    }
+
+    @keyframes mobile-menu-pop {
+        from { opacity: 0; transform: translateY(-6px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .side-menu-btn {
+        flex-direction: row;
+        gap: 8px;
+        padding: 8px 10px;
+    }
+
+    .side-menu-icon {
+        font-size: 1rem;
+    }
+
+    .side-menu-label {
+        font-size: .58rem;
     }
 
     .cover-masthead {
@@ -1025,23 +1101,5 @@ body {
 
     .rating-value {
         font-size: 1.7rem;
-    }
-
-    .side-menu {
-        right: 8px;
-        gap: 2px;
-        padding: 4px;
-    }
-
-    .side-menu-btn {
-        padding: 8px 6px;
-    }
-
-    .side-menu-icon {
-        font-size: 1rem;
-    }
-
-    .side-menu-label {
-        font-size: .5rem;
     }
 }
