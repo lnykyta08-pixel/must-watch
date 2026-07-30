@@ -1099,10 +1099,11 @@ body {
     /* Опис фільму — тепер спливаюче вікно, а не постійна панель на фото */
     .leaf-spread .right {
         position: fixed;
-        left: 16px;
-        right: 16px;
-        bottom: calc(16px + env(safe-area-inset-bottom));
-        top: auto;
+        left: 50%;
+        top: 50%;
+        right: auto;
+        bottom: auto;
+        width: min(86vw, 420px);
         max-height: 68vh;
         z-index: 60;
         display: flex;
@@ -1117,7 +1118,7 @@ body {
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
-        transform: translateY(14px) scale(.97);
+        transform: translate(-50%, -50%) scale(.96);
         transition: opacity .22s ease, transform .22s ease, visibility .22s;
     }
 
@@ -1125,7 +1126,7 @@ body {
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
-        transform: translateY(0) scale(1);
+        transform: translate(-50%, -50%) scale(1);
     }
 
     .leaf-spread .desc {
@@ -1205,17 +1206,16 @@ body {
         background: rgba(255,255,255,.14);
     }
 
-    /* Затемнення фону, коли відкрите вікно опису */
+    /* Прозорий шар для закриття тапом поза карткою — без затемнення екрана */
     .info-overlay {
         display: block;
         position: fixed;
         inset: 0;
         z-index: 55;
-        background: rgba(0, 0, 0, 0.55);
+        background: transparent;
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
-        transition: opacity .22s ease, visibility .22s;
     }
 
     body.movie-info-open .info-overlay {
