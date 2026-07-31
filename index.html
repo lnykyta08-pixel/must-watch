@@ -12,10 +12,18 @@
 <body>
 
 <div class="magazine-shell">
-    <button id="mobile-menu-toggle" class="mobile-menu-toggle" type="button" aria-label="Меню">☰</button>
-    <div id="translate-global" class="lang-switch" role="group" aria-label="Мова сайту">
-        <button class="lang-option" data-lang="ua" type="button">UA</button>
-        <button class="lang-option" data-lang="en" type="button">EN</button>
+    <div id="reading-progress" class="reading-progress">
+        <div id="reading-progress-fill" class="reading-progress-fill"></div>
+    </div>
+    <button id="mobile-menu-toggle" class="mobile-menu-toggle" type="button">☰</button>
+    <div class="top-bar">
+        <div id="page-indicator" class="page-indicator">
+            <span id="page-current">1</span><span class="page-sep">/</span><span id="page-total">1</span>
+        </div>
+        <div id="translate-global" class="lang-switch">
+            <button class="lang-option" data-lang="ua" type="button">UA</button>
+            <button class="lang-option" data-lang="en" type="button">EN</button>
+        </div>
     </div>
     <div id="info-overlay" class="info-overlay"></div>
     <div id="magazine" class="closed">
@@ -90,285 +98,69 @@
                 </div>
             </div>
 
-<!-- 1 сторінка -->
+<!-- Дані фільмів: щоб додати новий, скопіюйте один об'єкт і заповніть поля -->
+<!-- cat: movie | series | cartoon | anime -->
 
-            <div class="leaf leaf-spread" data-category="movie">
-                <div class="sheet left">
-                    <img class="poster"
-                        data-src-ua="American_Pickle.webp"
-                        data-src-en="American_Pickle.webp">
-                </div>
-                <div class="sheet right">
-                    <div class="desc">
-                        <div class="title-row">
-                            <h2 class="movie-title"
-                                data-ua="Американський огірочок"
-                                data-en="American Pickle">
-                            </h2>
-                            <span class="movie-year">2020</span>
-                            <button class="info-close" type="button" aria-label="Закрити / Close">✕</button>
-                        </div>
-                        <p class="desc-text"
-                            data-ua="Це фільм, у якому через постер, назву та концепцію символ маринованого огірочка використовується для уособлення збереження традиційних сімейних цінностей. Навіть Бен, придумуючи назву застосунку «BoopBop», мав на увазі, що «Boop» символізує батька, а «Bop» – матір."
-                            data-en="It is a film that, through its poster, title, and concept, uses the symbol of a pickled cucumber to represent the preservation of traditional family values. Even Ben, in the idea behind the app name «BoopBop», meant «Boop» to be the father and «Bop» to be the mother.">
-                        </p>
-                    </div>
-                </div>
-                <div class="rating">
-                    <button class="info-btn" type="button" aria-label="Інформація про фільм / Movie info">
-                        <span aria-hidden="true">i</span>
-                    </button>
-                    <span class="rating-label"
-                        data-ua="Оцінка"
-                        data-en="Rating"></span>
-                    <span class="rating-value">6<span class="rating-max">/10</span></span>
-                </div>
-            </div>
-
-<!-- 2 сторінка -->
-
-            <div class="leaf leaf-spread" data-category="movie">
-                <div class="sheet left">
-                    <img class="poster"
-                        data-src-ua="Antarctica_ua.webp"
-                        data-src-en="Antarctica_eng.webp">
-                </div>
-                <div class="sheet right">
-                    <div class="desc">
-                        <div class="title-row">
-                            <h2 class="movie-title"
-                                data-ua="Антарктида"
-                                data-en="Antarctica">
-                            </h2>
-                            <span class="movie-year">2025</span>
-                            <button class="info-close" type="button" aria-label="Закрити / Close">✕</button>
-                        </div>
-                        <p class="desc-text"
-                            data-ua="Це фільм про 30-ту Українську антарктичну експедицію та життя на станції «Академік Вернадський»."
-                            data-en="It is a film about the 30th Ukrainian Antarctic Expedition and life at the Akademik Vernadsky Station.">
-                        </p>
-                    </div>
-                </div>
-                <div class="rating">
-                    <button class="info-btn" type="button" aria-label="Інформація про фільм / Movie info">
-                        <span aria-hidden="true">i</span>
-                    </button>
-                    <span class="rating-label"
-                        data-ua="Оцінка"
-                        data-en="Rating"></span>
-                    <span class="rating-value">10<span class="rating-max">/10</span></span>
-                </div>
-            </div>
-
-<!-- 3 сторінка -->
-
-            <div class="leaf leaf-spread" data-category="movie">
-                <div class="sheet left">
-                    <img class="poster"
-                        data-src-ua="About_Time_ua.webp"
-                        data-src-en="About_Time_eng.webp">
-                </div>
-                <div class="sheet right">
-                    <div class="desc">
-                        <div class="title-row">
-                            <h2 class="movie-title"
-                                data-ua="Коханий з Майбутнього"
-                                data-en="About Time">
-                            </h2>
-                            <span class="movie-year">2013</span>
-                            <button class="info-close" type="button" aria-label="Закрити / Close">✕</button>
-                        </div>
-                        <p class="desc-text"
-                            data-ua="Це фільм про хлопця, який вміє подорожувати у часі та використовує свою здібність так само, якби це робили звичайні люди. Фільм розповідає історію його стосунків із дівчиною на ім'я Мері, але, постійно намагаючись зробити перебіг подій кращим, він втрачає зв'язок із нею. Коли ж він допомагає своїй сестрі уникнути автомобільної аварії, це знову змінює хід подій і змушує його зіткнутися з наслідками власних рішень. Цей фільм вчить, що кожна наша дія має наслідки, і нагадує, що неможливо зробити все ідеально."
-                            data-en="It is a film about a guy who can travel through time and uses his ability just as ordinary people would. The film tells the story of his relationship with a girl named Mary, but by constantly trying to make events turn out better, he loses touch with her. When he helps his sister avoid a car accident, it changes the course of events once again and forces him to face the consequences of his own decisions. This film teaches us that every action has consequences and reminds us that it is impossible to make everything perfect.">
-                        </p>
-                    </div>
-                </div>
-                <div class="rating">
-                    <button class="info-btn" type="button" aria-label="Інформація про фільм / Movie info">
-                        <span aria-hidden="true">i</span>
-                    </button>
-                    <span class="rating-label"
-                        data-ua="Оцінка"
-                        data-en="Rating"></span>
-                    <span class="rating-value">8<span class="rating-max">/10</span></span>
-                </div>
-            </div>
-
-<!-- 4 сторінка -->
-
-            <div class="leaf leaf-spread" data-category="anime">
-                <div class="sheet left">
-                    <img class="poster"
-                        data-src-ua="Arrietty_ua.webp"
-                        data-src-en="Arrietty_eng.webp">
-                </div>
-                <div class="sheet right">
-                    <div class="desc">
-                        <div class="title-row">
-                            <h2 class="movie-title"
-                                data-ua="Позичайка Аріетті"
-                                data-en="Arrietty">
-                            </h2>
-                            <span class="movie-year">2010</span>
-                            <button class="info-close" type="button" aria-label="Закрити / Close">✕</button>
-                        </div>
-                        <p class="desc-text"
-                            data-ua="Це аніме про існування крихітних істот, яких називають позичайками, що позичають у людей невеликі порції їжі. Вони намагаються залишатися непоміченими, але одного дня Аріетті помічають. Попри застереження своїх батьків, вона робить сміливий крок і починає дружити з хлопчиком. Проте допитлива хатня робітниця дізнається про існування позичайок і намагається їх спіймати. Через небезпеку сім'я Аріетті змушена покинути будинок."
-                            data-en="It is an anime about the existence of tiny creatures called borrowers who borrow small amounts of food from people. They try to stay out of sight, but one day Arrietty is noticed. Despite her parents' warnings, she takes a bold step and becomes friends with the boy. However, a curious housekeeper learns about the existence of the borrowers and tries to catch them. Because of the danger, Arrietty's family is forced to leave the house.">
-                        </p>
-                    </div>
-                </div>
-                <div class="rating">
-                    <button class="info-btn" type="button" aria-label="Інформація про фільм / Movie info">
-                        <span aria-hidden="true">i</span>
-                    </button>
-                    <span class="rating-label"
-                        data-ua="Оцінка"
-                        data-en="Rating"></span>
-                    <span class="rating-value">8<span class="rating-max">/10</span></span>
-                </div>
-            </div>
-
-<!-- 5 сторінка -->
-
-            <div class="leaf leaf-spread" data-category="movie">
-                <div class="sheet left">
-                    <img class="poster"
-                        data-src-ua="All_Quiet_on_the_Western_Front_ua.webp"
-                        data-src-en="All_Quiet_on_the_Western_Front_eng.webp">
-                </div>
-                <div class="sheet right">
-                    <div class="desc">
-                        <div class="title-row">
-                            <h2 class="movie-title"
-                                data-ua="На Західному Фронті Без Змін"
-                                data-en="All Quiet on the Western Front">
-                            </h2>
-                            <span class="movie-year">2022</span>
-                            <button class="info-close" type="button" aria-label="Закрити / Close">✕</button>
-                        </div>
-                        <p class="desc-text"
-                            data-ua="Це фільм, який успішно передає атмосферу війни, не романтизуючи її. Завдяки моторошній музиці режисер передає відчуття страху та жаху. Люди не розуміли, за що вони воюють. Проте ми не повинні забувати, що історія розповідається очима агресора. Перша світова війна забрала понад 17 мільйонів життів, із яких понад 3 мільйони були втрачені на Західному фронті."
-                            data-en="It is a film that successfully conveys the atmosphere of war without romanticizing it. Through eerie music, the director conveys a sense of fear and horror. People did not understand what they were fighting for. However, we should not forget that the story is told through the eyes of the aggressor. The First World War claimed over 17 million lives, of which over 3 million died on the Western Front.">
-                        </p>
-                    </div>
-                </div>
-                <div class="rating">
-                    <button class="info-btn" type="button" aria-label="Інформація про фільм / Movie info">
-                        <span aria-hidden="true">i</span>
-                    </button>
-                    <span class="rating-label"
-                        data-ua="Оцінка"
-                        data-en="Rating"></span>
-                    <span class="rating-value">8<span class="rating-max">/10</span></span>
-                </div>
-            </div>
-
-<!-- 6 сторінка -->
-
-            <div class="leaf leaf-spread" data-category="movie">
-                <div class="sheet left">
-                    <img class="poster"
-                        data-src-ua="Avatar_eng_ua.webp"
-                        data-src-en="Avatar_eng_ua.webp">
-                </div>
-                <div class="sheet right">
-                    <div class="desc">
-                        <div class="title-row">
-                            <h2 class="movie-title"
-                                data-ua="Аватар"
-                                data-en="Avatar">
-                            </h2>
-                            <span class="movie-year">2009</span>
-                            <button class="info-close" type="button" aria-label="Закрити / Close">✕</button>
-                        </div>
-                        <p class="desc-text"
-                            data-ua="Це фільм про чоловіка, який був паралізований і, щоб знову мати змогу ходити, погодився працювати з Адміністрацією Розвитку Ресурсів (АРР) над проєктом «Аватар». Після шестирічної подорожі він прибув на планету Пандора, де видобували рідкісний матеріал анобтаній. Після прибуття його навчили керувати аватаром, штучно створеним тілом На'ві, для взаємодії з мешканцями планети."
-                            data-en="It is a film about a man who was paralyzed and, in order to regain his ability, agreed to work with the Resources Development Administration (RDA) on the Avatar project. After a six-year journey, he arrived on the planet Pandora, where they were mining the rare material unobtanium. Upon arrival, he was trained to operate an avatar, an artificially created Na'vi body, to interact with the planet's inhabitants.">
-                        </p>
-                    </div>
-                </div>
-                <div class="rating">
-                    <button class="info-btn" type="button" aria-label="Інформація про фільм / Movie info">
-                        <span aria-hidden="true">i</span>
-                    </button>
-                    <span class="rating-label"
-                        data-ua="Оцінка"
-                        data-en="Rating"></span>
-                    <span class="rating-value">8<span class="rating-max">/10</span></span>
-                </div>
-            </div>
-
-<!-- 7 сторінка -->
-
-            <div class="leaf leaf-spread" data-category="movie">
-                <div class="sheet left">
-                    <img class="poster"
-                        data-src-ua="Borat_eng_ua.webp"
-                        data-src-en="Borat_eng_ua.webp">
-                </div>
-                <div class="sheet right">
-                    <div class="desc">
-                        <div class="title-row">
-                            <h2 class="movie-title"
-                                data-ua="Борат"
-                                data-en="Borat">
-                            </h2>
-                            <span class="movie-year">2006</span>
-                            <button class="info-close" type="button" aria-label="Закрити / Close">✕</button>
-                        </div>
-                        <p class="desc-text"
-                            data-ua="Це фільм, який показує приховану жорстокість, лицемірство та упередження частини американського суспільства. Фільм став успішним, тому що був створений як провокація для людей, розкриваючи конфлікт між людяністю та справжньою природою людини. Головний герой є антисемітом, хоча актор, який його зіграв, має єврейське походження."
-                            data-en="It is a film that shows the hidden cruelty, hypocrisy, and prejudice of part of American society. The film became successful because it was created as a provocation to the audience, revealing the conflict between humanity and a person’s true nature. The main character is an antisemite, although the actor who played him is of Jewish origin.">
-                        </p>
-                    </div>
-                </div>
-                <div class="rating">
-                    <button class="info-btn" type="button" aria-label="Інформація про фільм / Movie info">
-                        <span aria-hidden="true">i</span>
-                    </button>
-                    <span class="rating-label"
-                        data-ua="Оцінка"
-                        data-en="Rating"></span>
-                    <span class="rating-value">9<span class="rating-max">/10</span></span>
-                </div>
-            </div>
-
-<!-- 8 сторінка -->
-
-            <div class="leaf leaf-spread" data-category="movie">
-                <div class="sheet left">
-                    <img class="poster"
-                        data-src-ua="Beetlejuice_ua.webp"
-                        data-src-en="Beetlejuice_eng.webp">
-                </div>
-                <div class="sheet right">
-                    <div class="desc">
-                        <div class="title-row">
-                            <h2 class="movie-title"
-                                data-ua="Бітлджус"
-                                data-en="Beetlejuice">
-                            </h2>
-                            <span class="movie-year">2024</span>
-                            <button class="info-close" type="button" aria-label="Закрити / Close">✕</button>
-                        </div>
-                        <p class="desc-text"
-                            data-ua=""
-                            data-en="...">
-                        </p>
-                    </div>
-                </div>
-                <div class="rating">
-                    <button class="info-btn" type="button" aria-label="Інформація про фільм / Movie info">
-                        <span aria-hidden="true">i</span>
-                    </button>
-                    <span class="rating-label"
-                        data-ua="Оцінка"
-                        data-en="Rating"></span>
-                    <span class="rating-value">8<span class="rating-max">/10</span></span>
-                </div>
-            </div>
+<script type="application/json" id="movies-data">
+[
+  {
+    "cat": "movie", "year": 2020, "rating": 6,
+    "posterUa": "American_Pickle.webp", "posterEn": "American_Pickle.webp",
+    "titleUa": "Американський огірочок", "titleEn": "American Pickle",
+    "descUa": "Це фільм, у якому через постер, назву та концепцію символ маринованого огірочка використовується для уособлення збереження традиційних сімейних цінностей. Навіть Бен, придумуючи назву застосунку «BoopBop», мав на увазі, що «Boop» символізує батька, а «Bop» – матір.",
+    "descEn": "It is a film that, through its poster, title, and concept, uses the symbol of a pickled cucumber to represent the preservation of traditional family values. Even Ben, in the idea behind the app name «BoopBop», meant «Boop» to be the father and «Bop» to be the mother."
+  },
+  {
+    "cat": "movie", "year": 2025, "rating": 10,
+    "posterUa": "Antarctica_ua.webp", "posterEn": "Antarctica_eng.webp",
+    "titleUa": "Антарктида", "titleEn": "Antarctica",
+    "descUa": "Це фільм про 30-ту Українську антарктичну експедицію та життя на станції «Академік Вернадський».",
+    "descEn": "It is a film about the 30th Ukrainian Antarctic Expedition and life at the Akademik Vernadsky Station."
+  },
+  {
+    "cat": "movie", "year": 2013, "rating": 8,
+    "posterUa": "About_Time_ua.webp", "posterEn": "About_Time_eng.webp",
+    "titleUa": "Коханий з Майбутнього", "titleEn": "About Time",
+    "descUa": "Це фільм про хлопця, який вміє подорожувати у часі та використовує свою здібність так само, якби це робили звичайні люди. Фільм розповідає історію його стосунків із дівчиною на ім'я Мері, але, постійно намагаючись зробити перебіг подій кращим, він втрачає зв'язок із нею. Коли ж він допомагає своїй сестрі уникнути автомобільної аварії, це знову змінює хід подій і змушує його зіткнутися з наслідками власних рішень. Цей фільм вчить, що кожна наша дія має наслідки, і нагадує, що неможливо зробити все ідеально.",
+    "descEn": "It is a film about a guy who can travel through time and uses his ability just as ordinary people would. The film tells the story of his relationship with a girl named Mary, but by constantly trying to make events turn out better, he loses touch with her. When he helps his sister avoid a car accident, it changes the course of events once again and forces him to face the consequences of his own decisions. This film teaches us that every action has consequences and reminds us that it is impossible to make everything perfect."
+  },
+  {
+    "cat": "anime", "year": 2010, "rating": 8,
+    "posterUa": "Arrietty_ua.webp", "posterEn": "Arrietty_eng.webp",
+    "titleUa": "Позичайка Аріетті", "titleEn": "Arrietty",
+    "descUa": "Це аніме про існування крихітних істот, яких називають позичайками, що позичають у людей невеликі порції їжі. Вони намагаються залишатися непоміченими, але одного дня Аріетті помічають. Попри застереження своїх батьків, вона робить сміливий крок і починає дружити з хлопчиком. Проте допитлива хатня робітниця дізнається про існування позичайок і намагається їх спіймати. Через небезпеку сім'я Аріетті змушена покинути будинок.",
+    "descEn": "It is an anime about the existence of tiny creatures called borrowers who borrow small amounts of food from people. They try to stay out of sight, but one day Arrietty is noticed. Despite her parents' warnings, she takes a bold step and becomes friends with the boy. However, a curious housekeeper learns about the existence of the borrowers and tries to catch them. Because of the danger, Arrietty's family is forced to leave the house."
+  },
+  {
+    "cat": "movie", "year": 2022, "rating": 8,
+    "posterUa": "All_Quiet_on_the_Western_Front_ua.webp", "posterEn": "All_Quiet_on_the_Western_Front_eng.webp",
+    "titleUa": "На Західному Фронті Без Змін", "titleEn": "All Quiet on the Western Front",
+    "descUa": "Це фільм, який успішно передає атмосферу війни, не романтизуючи її. Завдяки моторошній музиці режисер передає відчуття страху та жаху. Люди не розуміли, за що вони воюють. Проте ми не повинні забувати, що історія розповідається очима агресора. Перша світова війна забрала понад 17 мільйонів життів, із яких понад 3 мільйони були втрачені на Західному фронті.",
+    "descEn": "It is a film that successfully conveys the atmosphere of war without romanticizing it. Through eerie music, the director conveys a sense of fear and horror. People did not understand what they were fighting for. However, we should not forget that the story is told through the eyes of the aggressor. The First World War claimed over 17 million lives, of which over 3 million died on the Western Front."
+  },
+  {
+    "cat": "movie", "year": 2009, "rating": 8,
+    "posterUa": "Avatar_eng_ua.webp", "posterEn": "Avatar_eng_ua.webp",
+    "titleUa": "Аватар", "titleEn": "Avatar",
+    "descUa": "Це фільм про чоловіка, який був паралізований і, щоб знову мати змогу ходити, погодився працювати з Адміністрацією Розвитку Ресурсів (АРР) над проєктом «Аватар». Після шестирічної подорожі він прибув на планету Пандора, де видобували рідкісний матеріал анобтаній. Після прибуття його навчили керувати аватаром, штучно створеним тілом На'ві, для взаємодії з мешканцями планети.",
+    "descEn": "It is a film about a man who was paralyzed and, in order to regain his ability, agreed to work with the Resources Development Administration (RDA) on the Avatar project. After a six-year journey, he arrived on the planet Pandora, where they were mining the rare material unobtanium. Upon arrival, he was trained to operate an avatar, an artificially created Na'vi body, to interact with the planet's inhabitants."
+  },
+  {
+    "cat": "movie", "year": 2006, "rating": 9,
+    "posterUa": "Borat_eng_ua.webp", "posterEn": "Borat_eng_ua.webp",
+    "titleUa": "Борат", "titleEn": "Borat",
+    "descUa": "Це фільм, який показує приховану жорстокість, лицемірство та упередження частини американського суспільства. Фільм став успішним, тому що був створений як провокація для людей, розкриваючи конфлікт між людяністю та справжньою природою людини. Головний герой є антисемітом, хоча актор, який його зіграв, має єврейське походження.",
+    "descEn": "It is a film that shows the hidden cruelty, hypocrisy, and prejudice of part of American society. The film became successful because it was created as a provocation to the audience, revealing the conflict between humanity and a person’s true nature. The main character is an antisemite, although the actor who played him is of Jewish origin."
+  },
+  {
+    "cat": "movie", "year": 2024, "rating": 8,
+    "posterUa": "Beetlejuice_ua.webp", "posterEn": "Beetlejuice_eng.webp",
+    "titleUa": "Бітлджус", "titleEn": "Beetlejuice",
+    "descUa": "Це фільм, що, попри 36-річну перерву між двама частинами, не втратив своєї привабливості для глядачів, а навпаки зберіг власну атмосферу. Назва фільму походить від спотвореної назви зірки Бетельгейзе.",
+    "descEn": "It is a film that, despite the 36-year gap between the two parts, did not lose its appeal to viewers, but on the contrary, preserved its own atmosphere. The name of the film comes from the distorted name of the star Betelgeuse."
+  }
+]
+</script>
 
 <!-- Задня палітурка -->
 
@@ -386,7 +178,7 @@
         <button id="nav-prev" class="nav-arrow">‹</button>
         <button id="nav-next" class="nav-arrow">›</button>
     </div>
-    <div id="side-menu" class="side-menu" role="group" aria-label="Навігація журналом">
+    <div id="side-menu" class="side-menu">
         <button id="menu-contents" class="side-menu-btn" type="button">
             <span class="side-menu-icon">☰</span>
             <span class="side-menu-label"

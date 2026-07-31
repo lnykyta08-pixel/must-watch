@@ -4,12 +4,79 @@ const prevButton = document.getElementById("nav-prev");
 const nextButton = document.getElementById("nav-next");
 const menuContentsButton = document.getElementById("menu-contents");
 const menuHomeButton = document.getElementById("menu-home");
+const pageCurrentEl = document.getElementById("page-current");
+const pageTotalEl = document.getElementById("page-total");
+const readingProgressFill = document.getElementById("reading-progress-fill");
 
 let leaves = [];
 let flippedCount = 0;
 let isAnimating = false;
 
 const PAGE_STORAGE_KEY = "must-watch-current-page";
+
+// Розгортає компактні дані з #movies-data в index.html у повну розмітку .leaf
+function renderMoviePages() {
+    const dataScript = document.getElementById("movies-data");
+    const backLeaf = leavesContainer.querySelector(".leaf-back");
+    if (!dataScript || !backLeaf) return;
+
+    let movies = [];
+    try {
+        movies = JSON.parse(dataScript.textContent);
+    } catch (err) {
+        console.error("Не вдалося прочитати movies-data:", err);
+        return;
+    }
+
+    movies.forEach((movie) => {
+        const leaf = document.createElement("div");
+        leaf.className = "leaf leaf-spread";
+        leaf.dataset.category = movie.cat || "movie";
+
+        leaf.innerHTML = `
+            <div class="sheet left">
+                <img class="poster"
+                    data-src-ua="${movie.posterUa}"
+                    data-src-en="${movie.posterEn}">
+            </div>
+            <div class="sheet right">
+                <div class="desc">
+                    <div class="title-row">
+                        <h2 class="movie-title"
+                            data-ua="${escapeAttr(movie.titleUa)}"
+                            data-en="${escapeAttr(movie.titleEn)}">
+                        </h2>
+                        <span class="movie-year">${movie.year}</span>
+                        <button class="info-close" type="button">✕</button>
+                    </div>
+                    <p class="desc-text"
+                        data-ua="${escapeAttr(movie.descUa)}"
+                        data-en="${escapeAttr(movie.descEn)}">
+                    </p>
+                </div>
+            </div>
+            <div class="rating">
+                <button class="info-btn" type="button">
+                    <span>i</span>
+                </button>
+                <span class="rating-label"
+                    data-ua="Оцінка"
+                    data-en="Rating"></span>
+                <span class="rating-value">${movie.rating}<span class="rating-max">/10</span></span>
+            </div>
+        `;
+
+        leavesContainer.insertBefore(leaf, backLeaf);
+    });
+}
+
+function escapeAttr(str) {
+    return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
 
 function buildLeaves() {
     leaves = Array.from(leavesContainer.children);
@@ -22,7 +89,10 @@ function buildLeaves() {
     updateLeaves();
     updateStatsPanel();
     initStatsPanelInteraction();
-    fitAllTitles();
+
+    if (pageTotalEl) {
+        pageTotalEl.textContent = leaves.length;
+    }
 }
 
 const TITLE_MIN_SCALE = 0.62;
@@ -55,18 +125,33 @@ function fitTitleFont(titleEl) {
     titleEl.style.whiteSpace = prevWhiteSpace || "";
 }
 
-function fitAllTitles() {
-    document.querySelectorAll(".movie-title").forEach(fitTitleFont);
+// Підганяємо шрифт заголовка лише для конкретного листка (а не для всіх одразу),
+// щоб зі зростанням кількості фільмів сторінка не гальмувала.
+function fitTitlesForLeaf(leaf) {
+    if (!leaf) return;
+    leaf.querySelectorAll(".movie-title").forEach(fitTitleFont);
+}
+
+// Той самий діапазон, що й вікно завантаження картинок: поточний листок + сусідні.
+function getVisibleLeaves() {
+    const current = flippedCount;
+    return [current - 1, current, current + 1]
+        .filter((i) => i >= 0 && i < leaves.length)
+        .map((i) => leaves[i]);
+}
+
+function fitVisibleTitles() {
+    getVisibleLeaves().forEach(fitTitlesForLeaf);
 }
 
 if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => fitAllTitles());
+    document.fonts.ready.then(() => fitVisibleTitles());
 }
 
 let titleFitResizeTimeout = null;
 window.addEventListener("resize", () => {
     clearTimeout(titleFitResizeTimeout);
-    titleFitResizeTimeout = setTimeout(fitAllTitles, 150);
+    titleFitResizeTimeout = setTimeout(fitVisibleTitles, 150);
 });
 
 function computeCategoryCounts() {
@@ -151,6 +236,15 @@ function updateLeaves() {
 
     localStorage.setItem(PAGE_STORAGE_KEY, flippedCount);
 
+    if (pageCurrentEl) {
+        pageCurrentEl.textContent = Math.min(flippedCount + 1, total);
+    }
+
+    if (readingProgressFill) {
+        const pct = total > 1 ? (flippedCount / (total - 1)) * 100 : 0;
+        readingProgressFill.style.width = pct + "%";
+    }
+
     manageImageWindow();
 }
 
@@ -170,6 +264,10 @@ function loadLeafImages(leaf) {
         }
         img.classList.add("is-loaded");
     });
+
+    // Підганяємо заголовок саме зараз, коли листок став видимим
+    // (у т.ч. після зміни мови чи ресайзу, коли текст/ширина могли змінитись).
+    fitTitlesForLeaf(leaf);
 }
 
 function unloadLeafImages(leaf) {
@@ -466,8 +564,6 @@ function applyLanguage(lang) {
         manageImageWindow();
         renderContents(lang);
     }
-
-    fitAllTitles();
 }
 
 langOptions.forEach((btn) => {
@@ -509,5 +605,6 @@ if (mobileMenuToggle) {
     });
 }
 
+renderMoviePages();
 buildLeaves();
 applyLanguage(currentLang);
