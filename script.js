@@ -1,7 +1,5 @@
 const magazine = document.getElementById("magazine");
 const leavesContainer = document.getElementById("pages");
-const prevButton = document.getElementById("nav-prev");
-const nextButton = document.getElementById("nav-next");
 const menuContentsButton = document.getElementById("menu-contents");
 const menuHomeButton = document.getElementById("menu-home");
 const pageCurrentEl = document.getElementById("page-current");
@@ -166,9 +164,6 @@ function updateLeaves() {
         "finished",
         flippedCount === total
     );
-
-    prevButton.disabled = flippedCount === 0;
-    nextButton.disabled = flippedCount >= total - 1;
 
     localStorage.setItem(PAGE_STORAGE_KEY, flippedCount);
 
@@ -395,10 +390,27 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeMovieInfo();
 });
 
-nextButton.addEventListener("click", () => jumpToLeaf(flippedCount + 1));
-prevButton.addEventListener("click", () => jumpToLeaf(flippedCount - 1));
+// Гортання колесом миші на ноут/десктоп версії
+const WHEEL_THRESHOLD = 24;
+let wheelCooldown = false;
 
-// Свайп для гортання сторінок на тф (замінює стрілки, які там приховані)
+magazine.addEventListener("wheel", (e) => {
+    if (e.target.closest(".side-menu, .top-bar, .mobile-menu-toggle, .reading-progress, .contents-grid")) return;
+    if (Math.abs(e.deltaY) < WHEEL_THRESHOLD || wheelCooldown) return;
+
+    e.preventDefault();
+
+    if (e.deltaY > 0) {
+        jumpToLeaf(flippedCount + 1);
+    } else {
+        jumpToLeaf(flippedCount - 1);
+    }
+
+    wheelCooldown = true;
+    setTimeout(() => { wheelCooldown = false; }, 350);
+}, { passive: false });
+
+// Свайп для гортання сторінок на тф
 const SWIPE_MIN_DISTANCE = 45;
 const SWIPE_MAX_OFF_AXIS = 60;
 let touchStartX = 0;
