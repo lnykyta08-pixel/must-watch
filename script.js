@@ -14,70 +14,6 @@ let isAnimating = false;
 
 const PAGE_STORAGE_KEY = "must-watch-current-page";
 
-// Розгортає компактні дані з #movies-data в index.html у повну розмітку .leaf
-function renderMoviePages() {
-    const dataScript = document.getElementById("movies-data");
-    const backLeaf = leavesContainer.querySelector(".leaf-back");
-    if (!dataScript || !backLeaf) return;
-
-    let movies = [];
-    try {
-        movies = JSON.parse(dataScript.textContent);
-    } catch (err) {
-        console.error("Не вдалося прочитати movies-data:", err);
-        return;
-    }
-
-    movies.forEach((movie) => {
-        const leaf = document.createElement("div");
-        leaf.className = "leaf leaf-spread";
-        leaf.dataset.category = movie.cat || "movie";
-
-        leaf.innerHTML = `
-            <div class="sheet left">
-                <img class="poster"
-                    data-src-ua="${movie.posterUa}"
-                    data-src-en="${movie.posterEn}">
-            </div>
-            <div class="sheet right">
-                <div class="desc">
-                    <div class="title-row">
-                        <h2 class="movie-title"
-                            data-ua="${escapeAttr(movie.titleUa)}"
-                            data-en="${escapeAttr(movie.titleEn)}">
-                        </h2>
-                        <span class="movie-year">${movie.year}</span>
-                        <button class="info-close" type="button">✕</button>
-                    </div>
-                    <p class="desc-text"
-                        data-ua="${escapeAttr(movie.descUa)}"
-                        data-en="${escapeAttr(movie.descEn)}">
-                    </p>
-                </div>
-            </div>
-            <div class="rating">
-                <button class="info-btn" type="button">
-                    <span>i</span>
-                </button>
-                <span class="rating-label"
-                    data-ua="Оцінка"
-                    data-en="Rating"></span>
-                <span class="rating-value">${movie.rating}<span class="rating-max">/10</span></span>
-            </div>
-        `;
-
-        leavesContainer.insertBefore(leaf, backLeaf);
-    });
-}
-
-function escapeAttr(str) {
-    return String(str ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/"/g, "&quot;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-}
-
 function buildLeaves() {
     leaves = Array.from(leavesContainer.children);
 
@@ -126,7 +62,7 @@ function fitTitleFont(titleEl) {
 }
 
 // Підганяємо шрифт заголовка лише для конкретного листка (а не для всіх одразу),
-// щоб зі зростанням кількості фільмів сторінка не гальмувала.
+// щоб зі зростанням кількості фільмів (100+) сторінка не гальмувала.
 function fitTitlesForLeaf(leaf) {
     if (!leaf) return;
     leaf.querySelectorAll(".movie-title").forEach(fitTitleFont);
@@ -536,7 +472,7 @@ function highlightCategoryWord(el, lang) {
     if (!words) return;
 
     const word = words[lang];
-    const regex = new RegExp(`(^|[^\\p{L}])(${word})(?!\\p{L})`, "iu");
+    const regex = new RegExp(`(^|[^\\p{L}])(${word}\\p{L}*)`, "iu");
 
     el.innerHTML = el.textContent.replace(
         regex,
@@ -605,6 +541,5 @@ if (mobileMenuToggle) {
     });
 }
 
-renderMoviePages();
 buildLeaves();
 applyLanguage(currentLang);
