@@ -275,38 +275,13 @@ function renderContents(lang) {
     }
 }
 
-// Категорія -> літера коду, окремо для кожної мови
-// EN: F = film, S = series, C = cartoon, A = anime
-// UA: К = кіно, С = серіали, М = мультфільми, А = аніме
-const CATEGORY_CODE = {
-    en: { movie: "F", series: "S", cartoon: "C", anime: "A" },
-    ua: { movie: "К", series: "С", cartoon: "М", anime: "А" },
-};
-
-function buildLetterCode(entries, lang) {
-    const codeMap = CATEGORY_CODE[lang] || CATEGORY_CODE.en;
-    const order = ["movie", "series", "cartoon", "anime"];
-
-    const counts = {};
-    order.forEach((cat) => { counts[cat] = 0; });
-
-    entries.forEach(({ category }) => {
-        if (Object.prototype.hasOwnProperty.call(counts, category)) {
-            counts[category] += 1;
-        }
-    });
-
-    const parts = order.map((cat) => `${codeMap[cat]}${counts[cat]}`);
-    return `(${parts.join("; ")})`;
-}
-
 function buildContentsSection(letter, entries, lang) {
     const section = document.createElement("div");
     section.className = "contents-section";
 
     const heading = document.createElement("div");
     heading.className = "contents-letter-heading";
-    heading.textContent = `${letter} ${buildLetterCode(entries, lang)}`;
+    heading.textContent = letter;
     section.appendChild(heading);
 
     entries.forEach(({ title, index }) => {
@@ -472,7 +447,7 @@ let currentLang = savedLang === "en" ? "en" : "ua";
 const categoryWords = {
     movie: { ua: "фільм", en: "film" },
     series: { ua: "серіал", en: "series" },
-    cartoon: { ua: "мультфільм", en: "cartoon" },
+    cartoon: { ua: "мультфільм", en: "animated film" },
     anime: { ua: "аніме", en: "anime" }
 };
 

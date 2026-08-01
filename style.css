@@ -701,7 +701,9 @@ body {
 }
 
 .rating-value {
-    font-family: 'Bodoni Moda', 'Didot', Georgia, serif;
+    font-family: 'Montserrat', sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
     font-weight: 700;
     font-size: 2.4rem;
     line-height: 1;
@@ -712,6 +714,9 @@ body {
 }
 
 .rating-max {
+    font-family: 'Montserrat', sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
     font-size: 1.2rem;
     font-weight: 500;
     opacity: .75;
