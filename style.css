@@ -5,20 +5,15 @@
 :root {
     --magazine-w: min(88vw, 900px);
     --magazine-h: min(88vh, 700px);
-
-    /* Приглушені кольори категорій */
     --col-movie: #b5524c;
     --col-movie-light: #e9b7ac;
     --col-movie-dark: #7a2f2b;
-
     --col-series: #cfa93e;
     --col-series-light: #f3dfa0;
     --col-series-dark: #8f7024;
-
     --col-cartoon: #6f9463;
     --col-cartoon-light: #c9dcb9;
     --col-cartoon-dark: #445c3d;
-
     --col-anime: #8868a8;
     --col-anime-light: #d9c7ea;
     --col-anime-dark: #55406b;
@@ -67,8 +62,6 @@ body {
     gap: 22px;
 }
 
-/* Каркас журналу */
-
 #magazine {
     position: relative;
     width: var(--magazine-w);
@@ -84,8 +77,6 @@ body {
     cursor: default;
     overflow: hidden;
 }
-
-/* Спільна логіка листка (обкладинка / розворот / палітурка) */
 
 .leaf {
     position: absolute;
@@ -190,7 +181,6 @@ body {
         rgba(0,0,0,.88));
 }
 
-/* золота рамка-паспарту, як у преміальних журналів */
 .cover-face::after{
     content:"";
     position:absolute;
@@ -205,8 +195,6 @@ body {
     position:relative;
     z-index:2;
 }
-
-/* верх */
 
 .cover-top{
     display:flex;
@@ -245,8 +233,6 @@ body {
     background:linear-gradient(90deg, transparent, rgba(216,180,107,.7));
 }
 
-/* логотип */
-
 .cover-header{
     text-align:center;
     margin-top:6px;
@@ -277,8 +263,6 @@ body {
     letter-spacing:.14em;
     font-size:1.15rem;
 }
-
-/* середина */
 
 .cover-content{
     display:flex;
@@ -334,8 +318,6 @@ body {
 .quote-mark.end{
     text-align:right;
 }
-
-/* статистика*/
 
 .stats-panel{
     margin-top:auto;
@@ -433,8 +415,6 @@ body {
     text-overflow:ellipsis;
 }
 
-/* низ */
-
 .cover-footer{
     display:flex;
     align-items:center;
@@ -457,8 +437,6 @@ body {
     text-transform:uppercase;
     font-size:.86rem;
 }
-
-/* Розворот (постер + опис) */
 
 .leaf-spread {
     display: flex;
@@ -558,8 +536,6 @@ body {
     opacity: .85;
 }
 
-/* Смуга прогресу читання зверху екрана — сегменти-риски у стилі Instagram Stories,
-   по одному на кожну сторінку, з кольором категорії та значком поточної сторінки */
 .reading-progress {
     position: fixed;
     top: 0;
@@ -605,7 +581,6 @@ body {
     box-shadow: 0 0 8px rgba(216, 180, 107, .7);
 }
 
-/* Значок категорії — з'являється над поточним сегментом */
 .progress-segment .progress-symbol {
     position: absolute;
     top: 8px;
@@ -624,7 +599,6 @@ body {
     transform: translateX(-50%) scale(1);
 }
 
-/* Верхня панель — номер сторінки та перемикач мови поруч */
 .top-bar {
     position: fixed;
     top: 24px;
@@ -660,7 +634,6 @@ body {
     margin: 0 3px;
 }
 
-/* Глобальний перемикач перекладу — тепер частина .top-bar */
 .lang-switch {
     z-index: 2000;
     display: flex;
@@ -703,7 +676,6 @@ body {
     transform: translateY(-1px);
 }
 
-/* Кнопка-гамбургер для мобільної версії (приховано на десктопі) */
 .mobile-menu-toggle {
     display: none;
 }
@@ -720,7 +692,6 @@ body {
     word-break: break-word;
 }
 
-/* Кнопка "i", кнопка закриття і затемнення — потрібні лише в мобільній версії */
 .info-btn,
 .info-close,
 .info-overlay {
@@ -780,8 +751,6 @@ body {
     color: #f1e6cf;
     -webkit-text-fill-color: #f1e6cf;
 }
-
-/* Сторінка "Зміст" — абетка-навігація */
 
 .leaf-contents .contents-face {
     position: relative;
@@ -906,8 +875,6 @@ body {
     transition: color .2s;
 }
 
-/* Бокове меню навігації — фіксоване з правого краю сайту */
-
 .side-menu {
     position: fixed;
     top: 50%;
@@ -964,8 +931,6 @@ body {
 .side-menu-cat.cat-cartoon.active { background: rgba(111,148,99,.28); }
 .side-menu-cat.cat-anime.active { background: rgba(136,104,168,.28); }
 
-/* Ліва панель-абетка для швидкого переходу за першою літерою назви */
-
 .alpha-nav {
     position: fixed;
     top: 50%;
@@ -1014,8 +979,6 @@ body {
     color: #f1e6cf;
     background: rgba(216,180,107,.24);
 }
-
-/* Випадаюче вікно зі списком фільмів/серіалів на обрану літеру */
 
 .alpha-flyout {
     position: fixed;
@@ -1158,7 +1121,6 @@ body {
         border-radius: 0;
     }
 
-    /* Переклад, зміст і головна ховаються в одну кнопку */
     .mobile-menu-toggle {
         display: flex;
         align-items: center;
@@ -1271,7 +1233,6 @@ body {
         font-size: 1.2rem;
     }
 
-    /* Панель статистики на обкладинці — 2х2 сітка, щоб підписи вміщались повністю */
     .stats-panel {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1303,7 +1264,6 @@ body {
         line-height: 1.3;
     }
 
-    /* Ховаємо чорний нативний повзунок скролу в змісті — на iOS його неможливо перефарбувати */
     .contents-grid::-webkit-scrollbar {
         display: none;
     }
@@ -1312,7 +1272,6 @@ body {
         scrollbar-width: none;
     }
 
-    /* Постер — невелике фото у верхньому лівому куті, назва й рік — у рядку з ним, опис нижче на всю ширину, оцінка притиснута до самого низу сторінки */
     .leaf-spread {
         display: block;
         height: 100%;
@@ -1326,10 +1285,9 @@ body {
     .leaf-spread .sheet.left {
         float: left;
         position: static;
-        align-self: start;
         width: 200px;
         height: 258px;
-        margin: 20px 0 0 20px;
+        margin: 20px 16px 10px 20px;
         border-radius: 10px;
         border: 1px solid rgba(216,180,107,.4);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
@@ -1353,7 +1311,6 @@ body {
     }
 
     .leaf-spread .title-row {
-        grid-area: title;
         display: block;
         text-align: left;
         margin: 20px 20px 0 0;
@@ -1372,7 +1329,6 @@ body {
     }
 
     .leaf-spread .desc p {
-        grid-area: desc;
         margin: 10px 20px 0 0;
         font-size: 1.05rem;
         line-height: 1.55;
