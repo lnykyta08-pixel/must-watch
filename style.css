@@ -1253,7 +1253,7 @@ body {
         scrollbar-width: none;
     }
 
-    /* Постер — невелике фото у верхньому лівому куті, назва й рік — справа від нього, опис нижче на всю ширину, оцінка притиснута до самого низу сторінки */
+    /* Постер — невелике фото у верхньому лівому куті, назва й рік — у рядку з ним, опис нижче на всю ширину, оцінка притиснута до самого низу сторінки */
     .leaf-spread {
         display: grid;
         grid-template-columns: 130px 1fr;
@@ -1299,13 +1299,13 @@ body {
         display: contents;
     }
 
-    /* Назва й рік — окрема область гріду, справа від постера, притиснуті до правого краю */
+    /* Назва й рік — у рядку з постером, починаються одразу біля фото і йдуть до кінця рядка */
     .leaf-spread .title-row {
         grid-area: title;
         align-self: start;
         align-items: baseline;
-        justify-content: flex-end;
-        text-align: right;
+        justify-content: space-between;
+        text-align: left;
         gap: 10px;
         flex-wrap: wrap;
         margin: 20px 20px 0 12px;
@@ -1314,7 +1314,7 @@ body {
     .leaf-spread .desc h2 {
         font-size: 1.2rem;
         white-space: normal;
-        text-align: right;
+        text-align: left;
     }
 
     /* Опис фільму — окрема область гріду на всю ширину під постером і назвою */
