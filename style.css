@@ -894,6 +894,130 @@ body {
     line-height: 1;
 }
 
+.side-menu-divider {
+    height: 1px;
+    margin: 2px 6px;
+    background: rgba(216,180,107,.28);
+}
+
+.side-menu-cat.active {
+    color: #f1e6cf;
+}
+
+.side-menu-cat.cat-movie.active { background: rgba(181,82,76,.28); }
+.side-menu-cat.cat-series.active { background: rgba(207,169,62,.28); }
+.side-menu-cat.cat-cartoon.active { background: rgba(111,148,99,.28); }
+.side-menu-cat.cat-anime.active { background: rgba(136,104,168,.28); }
+
+/* Ліва панель-абетка для швидкого переходу за першою літерою назви */
+
+.alpha-nav {
+    position: fixed;
+    top: 50%;
+    left: 28px;
+    transform: translateY(-50%);
+    z-index: 1900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    max-height: 76vh;
+    overflow-y: auto;
+    padding: 8px 4px;
+    background: rgba(20, 18, 16, 0.72);
+    border: 1px solid rgba(216,180,107,.4);
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+    scrollbar-width: none;
+}
+
+.alpha-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.alpha-nav-btn {
+    background: transparent;
+    border: none;
+    color: #cbb488;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: .66rem;
+    line-height: 1;
+    padding: 4px 7px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: color .2s, background .2s;
+}
+
+.alpha-nav-btn:hover {
+    color: #f1e6cf;
+    background: rgba(216,180,107,.16);
+}
+
+.alpha-nav-btn.active {
+    color: #f1e6cf;
+    background: rgba(216,180,107,.24);
+}
+
+/* Випадаюче вікно зі списком фільмів/серіалів на обрану літеру */
+
+.alpha-flyout {
+    position: fixed;
+    z-index: 1950;
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 220px;
+    max-width: 300px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 10px 8px;
+    background: rgba(20, 18, 16, 0.92);
+    border: 1px solid rgba(216,180,107,.4);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    scrollbar-width: none;
+    animation: mobile-menu-pop .15s ease;
+}
+
+.alpha-flyout::-webkit-scrollbar {
+    display: none;
+}
+
+.alpha-flyout.open {
+    display: flex;
+}
+
+.alpha-flyout-entry {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.02rem;
+    color: #e7d8bb;
+    transition: color .2s, background .2s;
+}
+
+.alpha-flyout-entry:hover {
+    color: #f1e6cf;
+    background: rgba(216,180,107,.14);
+}
+
+.alpha-flyout-entry .entry-page {
+    margin-left: auto;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .68rem;
+    letter-spacing: .05em;
+    color: #cbb488;
+    opacity: .75;
+    flex-shrink: 0;
+}
+
 .side-menu-label {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
@@ -1015,12 +1139,14 @@ body {
     }
 
     .lang-switch,
-    .side-menu {
+    .side-menu,
+    .alpha-nav {
         display: none;
     }
 
     body.mobile-menu-open .lang-switch,
-    body.mobile-menu-open .side-menu {
+    body.mobile-menu-open .side-menu,
+    body.mobile-menu-open .alpha-nav {
         display: flex;
     }
 
@@ -1040,6 +1166,21 @@ body {
         right: 10px;
         transform: none;
         flex-direction: column;
+        z-index: 2100;
+        animation: mobile-menu-pop .18s ease;
+    }
+
+    .alpha-nav {
+        position: fixed;
+        top: 56px;
+        left: 10px;
+        bottom: 10px;
+        transform: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        max-height: none;
+        max-width: 60vw;
         z-index: 2100;
         animation: mobile-menu-pop .18s ease;
     }

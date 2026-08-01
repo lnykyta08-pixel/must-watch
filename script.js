@@ -120,9 +120,48 @@ function updateStatsPanel() {
     });
 }
 
+let categoryFilter = null;
+
 function jumpToCategory(category) {
     const index = leaves.findIndex((leaf) => leaf.dataset.category === category);
     if (index !== -1) jumpToLeaf(index);
+}
+
+function updateCategoryFilterUI() {
+    document.querySelectorAll(".side-menu-cat").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.category === categoryFilter);
+    });
+}
+
+// Клік по категорії вмикає/вимикає фільтр: доки він активний,
+// гортання колесом і свайпом пропускає листки інших категорій.
+function setCategoryFilter(category) {
+    categoryFilter = categoryFilter === category ? null : category;
+    updateCategoryFilterUI();
+
+    if (categoryFilter) {
+        jumpToCategory(categoryFilter);
+    }
+}
+
+function clearCategoryFilter() {
+    if (!categoryFilter) return;
+    categoryFilter = null;
+    updateCategoryFilterUI();
+}
+
+// Знаходить найближчий у напрямку direction листок, що задовольняє активний фільтр
+function findNextMatchingLeaf(fromIndex, direction) {
+    if (!categoryFilter) {
+        return fromIndex >= 0 && fromIndex < leaves.length ? fromIndex : -1;
+    }
+
+    let i = fromIndex;
+    while (i >= 0 && i < leaves.length) {
+        if (leaves[i].dataset.category === categoryFilter) return i;
+        i += direction;
+    }
+    return -1;
 }
 
 function initStatsPanelInteraction() {
@@ -135,13 +174,13 @@ function initStatsPanelInteraction() {
 
         statEl.addEventListener("click", (e) => {
             e.stopPropagation();
-            jumpToCategory(category);
+            setCategoryFilter(category);
         });
 
         statEl.addEventListener("keydown", (e) => {
             if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
-                jumpToCategory(category);
+                setCategoryFilter(category);
             }
         });
     });
@@ -237,10 +276,8 @@ function getMovieLeaves() {
         .filter(({ leaf }) => leaf.classList.contains("leaf-spread"));
 }
 
-function renderContents(lang) {
-    const container = document.getElementById("contents-grid");
-    if (!container || !leaves.length) return;
-
+// Групує всі листки за першою літерою назви (спільна логіка для змісту й лівої абетки)
+function getLetterGroups(lang) {
     const alphabet = getAlphabet(lang);
     const groups = new Map();
     const hashGroup = [];
@@ -262,6 +299,15 @@ function renderContents(lang) {
         }
     });
 
+    return { alphabet, groups, hashGroup };
+}
+
+function renderContents(lang) {
+    const container = document.getElementById("contents-grid");
+    if (!container || !leaves.length) return;
+
+    const { alphabet, groups, hashGroup } = getLetterGroups(lang);
+
     container.innerHTML = "";
 
     alphabet.forEach((letter) => {
@@ -273,6 +319,100 @@ function renderContents(lang) {
     if (hashGroup.length) {
         container.appendChild(buildContentsSection("#", hashGroup, lang));
     }
+}
+
+// Ліва панель швидкого переходу за першою літерою назви (перемикається разом з мовою)
+const alphaFlyout = document.getElementById("alpha-flyout");
+let alphaFlyoutLetter = null;
+
+function closeAlphaFlyout() {
+    if (!alphaFlyout) return;
+    alphaFlyout.classList.remove("open");
+    alphaFlyoutLetter = null;
+    document.querySelectorAll(".alpha-nav-btn.active").forEach((btn) => {
+        btn.classList.remove("active");
+    });
+}
+
+function openAlphaFlyout(letter, entries, anchorBtn) {
+    if (!alphaFlyout) return;
+
+    alphaFlyout.innerHTML = "";
+
+    entries.forEach(({ title, index }) => {
+        const row = document.createElement("div");
+        row.className = "alpha-flyout-entry";
+
+        const titleSpan = document.createElement("span");
+        titleSpan.textContent = title;
+
+        const page = document.createElement("span");
+        page.className = "entry-page";
+        page.textContent = String(index).padStart(2, "0");
+
+        row.append(titleSpan, page);
+        row.addEventListener("click", (e) => {
+            e.stopPropagation();
+            clearCategoryFilter();
+            jumpToLeaf(index);
+            closeAlphaFlyout();
+            document.body.classList.remove("mobile-menu-open");
+        });
+
+        alphaFlyout.appendChild(row);
+    });
+
+    const rect = anchorBtn.getBoundingClientRect();
+    const isMobile = window.matchMedia("(max-width: 600px)").matches;
+
+    if (isMobile) {
+        alphaFlyout.style.left = Math.min(rect.right + 8, window.innerWidth - 240) + "px";
+        alphaFlyout.style.top = rect.top + "px";
+    } else {
+        alphaFlyout.style.left = rect.right + 12 + "px";
+        alphaFlyout.style.top = Math.max(12, Math.min(rect.top, window.innerHeight - 60)) + "px";
+    }
+
+    alphaFlyout.classList.add("open");
+    alphaFlyoutLetter = letter;
+}
+
+function renderAlphaNav(lang) {
+    const container = document.getElementById("alpha-nav");
+    if (!container || !leaves.length) return;
+
+    const { alphabet, groups, hashGroup } = getLetterGroups(lang);
+
+    container.innerHTML = "";
+    closeAlphaFlyout();
+
+    const addLetterButton = (letter, entries) => {
+        const btn = document.createElement("button");
+        btn.className = "alpha-nav-btn";
+        btn.type = "button";
+        btn.textContent = letter;
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+
+            if (alphaFlyoutLetter === letter) {
+                closeAlphaFlyout();
+                return;
+            }
+
+            document.querySelectorAll(".alpha-nav-btn.active").forEach((b) => {
+                b.classList.remove("active");
+            });
+            btn.classList.add("active");
+            openAlphaFlyout(letter, entries, btn);
+        });
+        container.appendChild(btn);
+    };
+
+    alphabet.forEach((letter) => {
+        if (groups.has(letter)) addLetterButton(letter, groups.get(letter));
+    });
+
+    if (hashGroup.length) addLetterButton("#", hashGroup);
 }
 
 function buildContentsSection(letter, entries, lang) {
@@ -302,6 +442,7 @@ function buildContentsSection(letter, entries, lang) {
         row.append(titleSpan, leader, page);
         row.addEventListener("click", (e) => {
             e.stopPropagation();
+            clearCategoryFilter();
             jumpToLeaf(index);
         });
 
@@ -315,6 +456,7 @@ function jumpToLeaf(index) {
     if (isAnimating || index < 0 || index >= leaves.length) return;
 
     closeMovieInfo();
+    closeAlphaFlyout();
 
     flippedCount = index;
     updateLeaves();
@@ -361,8 +503,17 @@ if (infoOverlay) {
     infoOverlay.addEventListener("click", () => closeMovieInfo());
 }
 
+document.addEventListener("click", (e) => {
+    if (!alphaFlyoutLetter) return;
+    if (e.target.closest(".alpha-nav, .alpha-flyout")) return;
+    closeAlphaFlyout();
+});
+
 document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeMovieInfo();
+    if (e.key === "Escape") {
+        closeMovieInfo();
+        closeAlphaFlyout();
+    }
 });
 
 // Гортання колесом миші на ноут/десктоп версії
@@ -370,15 +521,17 @@ const WHEEL_THRESHOLD = 24;
 let wheelCooldown = false;
 
 magazine.addEventListener("wheel", (e) => {
-    if (e.target.closest(".side-menu, .top-bar, .mobile-menu-toggle, .reading-progress, .contents-grid")) return;
+    if (e.target.closest(".side-menu, .top-bar, .mobile-menu-toggle, .reading-progress, .contents-grid, .alpha-nav")) return;
     if (Math.abs(e.deltaY) < WHEEL_THRESHOLD || wheelCooldown) return;
 
     e.preventDefault();
 
     if (e.deltaY > 0) {
-        jumpToLeaf(flippedCount + 1);
+        const next = findNextMatchingLeaf(flippedCount + 1, 1);
+        if (next !== -1) jumpToLeaf(next);
     } else {
-        jumpToLeaf(flippedCount - 1);
+        const prev = findNextMatchingLeaf(flippedCount - 1, -1);
+        if (prev !== -1) jumpToLeaf(prev);
     }
 
     wheelCooldown = true;
@@ -408,9 +561,11 @@ magazine.addEventListener("touchend", (e) => {
 
     // Миттєвий перехід (без анімації перегортання), щоб одразу можна було свайпнути далі
     if (dx < 0) {
-        jumpToLeaf(flippedCount + 1);
+        const next = findNextMatchingLeaf(flippedCount + 1, 1);
+        if (next !== -1) jumpToLeaf(next);
     } else {
-        jumpToLeaf(flippedCount - 1);
+        const prev = findNextMatchingLeaf(flippedCount - 1, -1);
+        if (prev !== -1) jumpToLeaf(prev);
     }
 }, { passive: true });
 
@@ -418,6 +573,7 @@ menuHomeButton.addEventListener("click", (e) => {
     e.stopPropagation();
 
     closeMovieInfo();
+    clearCategoryFilter();
     flippedCount = 0;
     updateLeaves();
 
@@ -426,6 +582,8 @@ menuHomeButton.addEventListener("click", (e) => {
 
 menuContentsButton.addEventListener("click", (e) => {
     e.stopPropagation();
+
+    clearCategoryFilter();
 
     const contentsIndex = leaves.findIndex((leaf) =>
         leaf.classList.contains("leaf-contents")
@@ -436,6 +594,14 @@ menuContentsButton.addEventListener("click", (e) => {
     }
 
     document.body.classList.remove("mobile-menu-open");
+});
+
+document.querySelectorAll(".side-menu-cat").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setCategoryFilter(btn.dataset.category);
+        document.body.classList.remove("mobile-menu-open");
+    });
 });
 
 const langOptions = document.querySelectorAll(".lang-option");
@@ -486,6 +652,7 @@ function applyLanguage(lang) {
     if (leaves.length) {
         manageImageWindow();
         renderContents(lang);
+        renderAlphaNav(lang);
     }
 }
 
@@ -516,11 +683,13 @@ if (mobileMenuToggle) {
 
         const langSwitch = document.getElementById("translate-global");
         const sideMenu = document.getElementById("side-menu");
+        const alphaNav = document.getElementById("alpha-nav");
 
         const clickedInside =
             mobileMenuToggle.contains(e.target) ||
             (langSwitch && langSwitch.contains(e.target)) ||
-            (sideMenu && sideMenu.contains(e.target));
+            (sideMenu && sideMenu.contains(e.target)) ||
+            (alphaNav && alphaNav.contains(e.target));
 
         if (!clickedInside) {
             document.body.classList.remove("mobile-menu-open");
