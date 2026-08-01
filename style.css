@@ -1253,26 +1253,30 @@ body {
         scrollbar-width: none;
     }
 
-    /* Фото на всю сторінку, текст і оцінка — на скляній панелі поверх фото знизу */
+    /* Постер зменшено — тепер лише невелике фото у верхньому лівому куті сторінки, опис і оцінка йдуть одразу під ним звичайним текстом */
     .leaf-spread {
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
-    }
-
-    .leaf-spread .sheet {
-        width: 100%;
-    }
-
-    .leaf-spread .left {
-        position: absolute;
-        inset: 0;
+        align-items: stretch;
         height: 100%;
-        border: none;
-        box-shadow: none;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .leaf-spread .sheet.left {
+        position: static;
+        flex: 0 0 auto;
+        align-self: flex-start;
+        width: 132px;
+        height: 184px;
+        margin: 22px 0 0 22px;
+        border-radius: 10px;
+        border: 1px solid rgba(216,180,107,.4);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     }
 
     .leaf-spread .poster {
+        border-radius: 9px;
         object-position: center 22%;
     }
 
@@ -1280,170 +1284,46 @@ body {
         object-position: center 80%;
     }
 
-    /* Опис фільму — тепер спливаюче вікно, а не постійна панель на фото */
-    .leaf-spread .right {
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        right: auto;
-        bottom: auto;
-        width: min(86vw, 420px);
-        max-height: 68vh;
-        z-index: 60;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        border: 1px solid rgba(216,180,107,.4);
-        border-radius: 18px;
-        background: rgba(15, 13, 12, 0.86);
-        backdrop-filter: blur(18px) saturate(120%);
-        -webkit-backdrop-filter: blur(18px) saturate(120%);
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transform: translate(-50%, -50%) scale(.96);
-        transition: opacity .22s ease, transform .22s ease, visibility .22s;
-    }
-
-    .leaf-spread.movie-info-open .right {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transform: translate(-50%, -50%) scale(1);
+    .leaf-spread .sheet.right {
+        position: static;
+        width: 100%;
+        height: auto;
+        border: none;
+        box-shadow: none;
+        background: none;
     }
 
     .leaf-spread .desc {
-        position: relative;
-        padding: 18px 18px 20px 18px;
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        padding: 16px 22px 20px 22px;
     }
 
     .leaf-spread .title-row {
         align-items: center;
         justify-content: flex-start;
         gap: 10px;
+        flex-wrap: wrap;
     }
 
     .leaf-spread .desc h2 {
-        font-size: 1.25rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-size: 1.2rem;
+        white-space: normal;
     }
 
     .leaf-spread .desc p {
         font-size: 0.92rem;
-        line-height: 1.5;
+        line-height: 1.55;
     }
 
-    /* Кнопка "i" — над панеллю оцінки, відкриває опис фільму */
-    .info-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        bottom: 100%;
-        right: 16px;
-        margin-bottom: 12px;
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        border: 1px solid rgba(216,180,107,.55);
-        background: rgba(20, 18, 16, 0.78);
-        backdrop-filter: blur(8px);
-        color: #d8b46b;
-        font-family: 'Bodoni Moda', 'Didot', Georgia, serif;
-        font-style: italic;
-        font-weight: 700;
-        font-size: 1rem;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-        cursor: pointer;
-        z-index: 3;
-        transition: background .2s, transform .2s;
-    }
-
-    .info-btn:active {
-        transform: scale(.92);
-    }
-
-    .leaf-spread.movie-info-open .info-btn {
-        background: rgba(216,180,107,.9);
-        color: #171412;
-    }
-
-    /* Кнопка закриття — тепер у рядку з назвою й роком, правіше року */
-    .info-close {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: static;
-        flex: 0 0 auto;
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        border: 1px solid rgba(216,180,107,.4);
-        background: rgba(255,255,255,.06);
-        color: #cbb488;
-        font-size: .75rem;
-        line-height: 1;
-        cursor: pointer;
-        z-index: 1;
-    }
-
-    .info-close:active {
-        background: rgba(255,255,255,.14);
-    }
-
-    /* Прозорий шар для закриття тапом поза карткою — без затемнення екрана */
-    .info-overlay {
-        display: block;
-        position: fixed;
-        inset: 0;
-        z-index: 55;
-        background: transparent;
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-    }
-
-    body.movie-info-open .info-overlay {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-    }
-
-    /* Оцінка — окремим рядком на тій самій скляній панелі знизу */
-
+    /* Оцінка — окремим рядком під описом, у звичайному потоці сторінки */
     .rating {
-        position: relative;
-        top: auto;
-        right: auto;
-        bottom: auto;
-        left: auto;
-        z-index: 2;
+        position: static;
         flex: 0 0 auto;
         width: 100%;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
         gap: 10px;
-        padding: 10px 16px calc(10px + env(safe-area-inset-bottom)) 16px;
+        padding: 14px 22px calc(20px + env(safe-area-inset-bottom)) 22px;
         border-top: 1px solid rgba(216,180,107,.32);
-        background: rgba(10, 9, 8, 0.42);
-        backdrop-filter: blur(13px) saturate(115%);
-        -webkit-backdrop-filter: blur(13px) saturate(115%);
-    }
-
-    .rating-label {
-        text-shadow: 0 1px 6px rgba(0,0,0,.6);
-    }
-
-    .rating-value {
-        font-size: 1.5rem;
-        text-shadow: 0 1px 8px rgba(0,0,0,.5);
     }
 }
