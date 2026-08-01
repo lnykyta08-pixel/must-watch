@@ -1164,7 +1164,7 @@ body {
         align-items: center;
         justify-content: center;
         position: fixed;
-        top: 26px;
+        top: 13px;
         right: 10px;
         width: 40px;
         height: 40px;
@@ -1234,7 +1234,6 @@ body {
         position: fixed;
         top: 56px;
         left: 10px;
-        bottom: 10px;
         transform: none;
         flex-direction: row;
         flex-wrap: wrap;
@@ -1316,7 +1315,7 @@ body {
     /* Постер — невелике фото у верхньому лівому куті, назва й рік — у рядку з ним, опис нижче на всю ширину, оцінка притиснута до самого низу сторінки */
     .leaf-spread {
         display: grid;
-        grid-template-columns: 130px 1fr;
+        grid-template-columns: 220px 1fr;
         grid-template-rows: auto 1fr auto;
         grid-template-areas:
             "poster title"
@@ -1334,8 +1333,8 @@ body {
         grid-area: poster;
         position: static;
         align-self: start;
-        width: 108px;
-        height: 150px;
+        width: 200px;
+        height: 258px;
         margin: 20px 0 0 20px;
         border-radius: 10px;
         border: 1px solid rgba(216,180,107,.4);
