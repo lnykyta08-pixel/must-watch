@@ -13,7 +13,6 @@ let isAnimating = false;
 
 const PAGE_STORAGE_KEY = "must-watch-current-page";
 
-// Іконки та кольори категорій — те саме, що й у бічному меню, використовуються як "символ" на смужці прогресу
 const CATEGORY_ICONS = {
     movie: "🎬",
     series: "📺",
@@ -37,7 +36,6 @@ function getLeafSymbol(leaf) {
     return "•";
 }
 
-// Будуємо смужку прогресу — по одному сегменту на кожну сторінку, у стилі Instagram Stories
 function buildProgressSegments() {
     if (!readingProgressEl) return;
     readingProgressEl.innerHTML = "";
@@ -115,14 +113,11 @@ function fitTitleFont(titleEl) {
     titleEl.style.whiteSpace = prevWhiteSpace || "";
 }
 
-// Підганяємо шрифт заголовка лише для конкретного листка (а не для всіх одразу),
-// щоб зі зростанням кількості фільмів (100+) сторінка не гальмувала.
 function fitTitlesForLeaf(leaf) {
     if (!leaf) return;
     leaf.querySelectorAll(".movie-title").forEach(fitTitleFont);
 }
 
-// Той самий діапазон, що й вікно завантаження картинок: поточний листок + сусідні.
 function getVisibleLeaves() {
     const current = flippedCount;
     return [current - 1, current, current + 1]
@@ -189,8 +184,6 @@ function updateCategoryFilterUI() {
     });
 }
 
-// Клік по категорії вмикає/вимикає фільтр: доки він активний,
-// гортання колесом і свайпом пропускає листки інших категорій.
 function setCategoryFilter(category) {
     categoryFilter = categoryFilter === category ? null : category;
     updateCategoryFilterUI();
@@ -206,7 +199,6 @@ function clearCategoryFilter() {
     updateCategoryFilterUI();
 }
 
-// Знаходить найближчий у напрямку direction листок, що задовольняє активний фільтр
 function findNextMatchingLeaf(fromIndex, direction) {
     if (!categoryFilter) {
         return fromIndex >= 0 && fromIndex < leaves.length ? fromIndex : -1;
@@ -288,8 +280,6 @@ function loadLeafImages(leaf) {
         img.classList.add("is-loaded");
     });
 
-    // Підганяємо заголовок саме зараз, коли листок став видимим
-    // (у т.ч. після зміни мови чи ресайзу, коли текст/ширина могли змінитись).
     fitTitlesForLeaf(leaf);
 }
 
@@ -329,7 +319,6 @@ function getMovieLeaves() {
         .filter(({ leaf }) => leaf.classList.contains("leaf-spread"));
 }
 
-// Групує всі листки за першою літерою назви (спільна логіка для змісту й лівої абетки)
 function getLetterGroups(lang) {
     const alphabet = getAlphabet(lang);
     const groups = new Map();
@@ -374,7 +363,6 @@ function renderContents(lang) {
     }
 }
 
-// Ліва панель швидкого переходу за першою літерою назви (перемикається разом з мовою)
 const alphaFlyout = document.getElementById("alpha-flyout");
 let alphaFlyoutLetter = null;
 
@@ -524,7 +512,6 @@ if (readingProgressEl) {
     });
 }
 
-// Спливаюче вікно з описом фільму (мобільна версія)
 const infoOverlay = document.getElementById("info-overlay");
 
 function openMovieInfo(leafSpread) {
@@ -578,7 +565,6 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-// Гортання колесом миші на ноут/десктоп версії
 const WHEEL_THRESHOLD = 24;
 let wheelCooldown = false;
 
@@ -621,7 +607,6 @@ magazine.addEventListener("touchend", (e) => {
 
     if (Math.abs(dx) < SWIPE_MIN_DISTANCE || Math.abs(dy) > SWIPE_MAX_OFF_AXIS) return;
 
-    // Миттєвий перехід (без анімації перегортання), щоб одразу можна було свайпнути далі
     if (dx < 0) {
         const next = findNextMatchingLeaf(flippedCount + 1, 1);
         if (next !== -1) jumpToLeaf(next);
