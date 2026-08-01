@@ -536,6 +536,37 @@ body {
     opacity: .85;
 }
 
+.movie-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 18px 0;
+}
+
+.meta-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.meta-label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: .62rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #cbb488;
+    opacity: .75;
+    white-space: nowrap;
+}
+
+.meta-value {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: .82rem;
+    color: #f1e6cf;
+}
+
 .reading-progress {
     position: fixed;
     top: 0;
@@ -1351,6 +1382,11 @@ body {
     .leaf-spread .movie-year {
         display: inline;
         margin-left: 10px;
+    }
+
+    .leaf-spread .movie-meta {
+        grid-area: title;
+        margin: 10px 20px 0 12px;
     }
 
     .leaf-spread .desc p {
