@@ -558,22 +558,70 @@ body {
     opacity: .85;
 }
 
-/* Смуга прогресу читання зверху екрана */
+/* Смуга прогресу читання зверху екрана — сегменти-риски у стилі Instagram Stories,
+   по одному на кожну сторінку, з кольором категорії та значком поточної сторінки */
 .reading-progress {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.06);
+    height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 0 10px;
     z-index: 2500;
 }
 
-.reading-progress-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #a97c3f, #d8b46b 55%, #fdf3d9);
-    transition: width .3s ease;
+.progress-segment {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 2px;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.14);
+    overflow: visible;
+    cursor: pointer;
+    transition: background .3s ease, box-shadow .3s ease;
+}
+
+.progress-segment.is-read {
+    background: var(--seg-color, linear-gradient(90deg, #a97c3f, #d8b46b 55%, #fdf3d9));
+    opacity: .55;
+}
+
+.progress-segment::before {
+    content: "";
+    position: absolute;
+    top: -9px;
+    bottom: -9px;
+    left: 0;
+    right: 0;
+}
+
+.progress-segment.is-current {
+    background: var(--seg-color, linear-gradient(90deg, #fdf3d9, #d8b46b 60%, #a97c3f));
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(216, 180, 107, .7);
+}
+
+/* Значок категорії — з'являється над поточним сегментом */
+.progress-segment .progress-symbol {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%) scale(.5);
+    font-size: .68rem;
+    line-height: 1;
+    opacity: 0;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .6));
+    transition: opacity .25s ease, transform .25s ease;
+}
+
+.progress-segment.is-current .progress-symbol {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
 }
 
 /* Верхня панель — номер сторінки та перемикач мови поруч */
@@ -1123,6 +1171,11 @@ body {
         backdrop-filter: blur(6px);
         cursor: pointer;
         transition: color .2s, transform .2s;
+    }
+
+    .reading-progress {
+        height: 16px;
+        padding: 0 62px 0 10px;
     }
 
     body.mobile-menu-open .mobile-menu-toggle {

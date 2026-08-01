@@ -4,13 +4,68 @@ const menuContentsButton = document.getElementById("menu-contents");
 const menuHomeButton = document.getElementById("menu-home");
 const pageCurrentEl = document.getElementById("page-current");
 const pageTotalEl = document.getElementById("page-total");
-const readingProgressFill = document.getElementById("reading-progress-fill");
+const readingProgressEl = document.getElementById("reading-progress");
 
 let leaves = [];
+let progressSegments = [];
 let flippedCount = 0;
 let isAnimating = false;
 
 const PAGE_STORAGE_KEY = "must-watch-current-page";
+
+// Іконки та кольори категорій — те саме, що й у бічному меню, використовуються як "символ" на смужці прогресу
+const CATEGORY_ICONS = {
+    movie: "🎬",
+    series: "📺",
+    cartoon: "🎨",
+    anime: "⛩"
+};
+
+const CATEGORY_COLORS = {
+    movie: "var(--col-movie)",
+    series: "var(--col-series)",
+    cartoon: "var(--col-cartoon)",
+    anime: "var(--col-anime)"
+};
+
+function getLeafSymbol(leaf) {
+    const category = leaf.dataset.category;
+    if (category && CATEGORY_ICONS[category]) return CATEGORY_ICONS[category];
+    if (leaf.classList.contains("leaf-cover")) return "⌂";
+    if (leaf.classList.contains("leaf-contents")) return "☰";
+    if (leaf.classList.contains("leaf-back")) return "🏁";
+    return "•";
+}
+
+// Будуємо смужку прогресу — по одному сегменту на кожну сторінку, у стилі Instagram Stories
+function buildProgressSegments() {
+    if (!readingProgressEl) return;
+    readingProgressEl.innerHTML = "";
+    progressSegments = leaves.map((leaf) => {
+        const segment = document.createElement("div");
+        segment.className = "progress-segment";
+
+        const category = leaf.dataset.category;
+        if (category && CATEGORY_COLORS[category]) {
+            segment.style.setProperty("--seg-color", CATEGORY_COLORS[category]);
+        }
+
+        const symbol = document.createElement("span");
+        symbol.className = "progress-symbol";
+        symbol.textContent = getLeafSymbol(leaf);
+        segment.appendChild(symbol);
+
+        readingProgressEl.appendChild(segment);
+        return segment;
+    });
+}
+
+function updateProgressSegments() {
+    progressSegments.forEach((segment, i) => {
+        segment.classList.toggle("is-read", i < flippedCount);
+        segment.classList.toggle("is-current", i === Math.min(flippedCount, leaves.length - 1));
+    });
+}
 
 function buildLeaves() {
     leaves = Array.from(leavesContainer.children);
@@ -20,6 +75,7 @@ function buildLeaves() {
         ? Math.min(Math.max(saved, 0), leaves.length)
         : 0;
 
+    buildProgressSegments();
     updateLeaves();
     updateStatsPanel();
     initStatsPanelInteraction();
@@ -210,10 +266,7 @@ function updateLeaves() {
         pageCurrentEl.textContent = Math.min(flippedCount + 1, total);
     }
 
-    if (readingProgressFill) {
-        const pct = total > 1 ? (flippedCount / (total - 1)) * 100 : 0;
-        readingProgressFill.style.width = pct + "%";
-    }
+    updateProgressSegments();
 
     manageImageWindow();
 }
@@ -460,6 +513,15 @@ function jumpToLeaf(index) {
 
     flippedCount = index;
     updateLeaves();
+}
+
+if (readingProgressEl) {
+    readingProgressEl.addEventListener("click", (e) => {
+        const segment = e.target.closest(".progress-segment");
+        if (!segment) return;
+        const index = progressSegments.indexOf(segment);
+        if (index !== -1) jumpToLeaf(index);
+    });
 }
 
 // Спливаюче вікно з описом фільму (мобільна версія)
