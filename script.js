@@ -31,8 +31,8 @@ const CATEGORY_COLORS = {
 function getLeafSymbol(leaf) {
     const category = leaf.dataset.category;
     if (category && CATEGORY_ICONS[category]) return CATEGORY_ICONS[category];
-    if (leaf.classList.contains("leaf-cover")) return "⌂";
-    if (leaf.classList.contains("leaf-contents")) return "☰";
+    if (leaf.classList.contains("leaf-cover")) return "🏠";
+    if (leaf.classList.contains("leaf-contents")) return "🧭";
     if (leaf.classList.contains("leaf-back")) return "🏁";
     return "•";
 }

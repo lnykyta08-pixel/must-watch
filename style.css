@@ -761,6 +761,15 @@ body {
     color: transparent;
 }
 
+.rating-decimal {
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: linear-gradient(180deg, #fdf3d9, #d8b46b 60%, #a97c3f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
 .rating-max {
     font-family: 'Montserrat', sans-serif;
     font-variant-numeric: tabular-nums;
@@ -771,8 +780,6 @@ body {
     color: #f1e6cf;
     -webkit-text-fill-color: #f1e6cf;
 }
-
-/* Задня палітурка */
 
 /* Сторінка "Зміст" — абетка-навігація */
 
@@ -1157,7 +1164,7 @@ body {
         align-items: center;
         justify-content: center;
         position: fixed;
-        top: 10px;
+        top: 26px;
         right: 10px;
         width: 40px;
         height: 40px;
@@ -1175,7 +1182,7 @@ body {
 
     .reading-progress {
         height: 16px;
-        padding: 0 62px 0 10px;
+        padding: 0 10px;
     }
 
     body.mobile-menu-open .mobile-menu-toggle {
