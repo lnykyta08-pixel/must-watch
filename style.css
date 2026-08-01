@@ -1300,14 +1300,13 @@ body {
 
     .leaf-spread {
         display: grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto 1fr auto;
+        grid-template-columns: 230px 1fr;
+        grid-template-rows: auto auto 1fr auto;
         grid-template-areas:
-            "poster"
-            "title"
-            "meta"
-            "desc"
-            "rating";
+            "title  title"
+            "poster meta"
+            "desc   desc"
+            "rating rating";
         height: 100%;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
@@ -1319,11 +1318,10 @@ body {
     .leaf-spread .sheet.left {
         grid-area: poster;
         position: static;
-        align-self: center;
-        justify-self: center;
+        align-self: start;
         width: 200px;
         height: 258px;
-        margin: 24px 0 0 0;
+        margin: 10px 0 0 20px;
         border-radius: 10px;
         border: 1px solid rgba(216,180,107,.4);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
@@ -1350,9 +1348,8 @@ body {
         grid-area: title;
         display: block;
         align-self: start;
-        justify-self: center;
         text-align: center;
-        margin: 16px 20px 0 20px;
+        margin: 20px 20px 0 20px;
     }
 
     .leaf-spread .desc h2 {
@@ -1364,14 +1361,12 @@ body {
 
     .leaf-spread .movie-meta {
         grid-area: meta;
-        align-items: center;
-        text-align: center;
-        margin: 12px 20px 0 20px;
+        margin: 20px 20px 0 12px;
     }
 
     .leaf-spread .desc p {
         grid-area: desc;
-        margin: 24px 20px 0 20px;
+        margin: 32px 20px 0 20px;
         font-size: 1.05rem;
         line-height: 1.55;
     }
