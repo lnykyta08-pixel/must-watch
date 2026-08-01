@@ -780,7 +780,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 54px 50px 46px;
+    padding: 54px 24px 46px;
     color: #f1e6cf;
     background:
         radial-gradient(circle at 50% 0%, rgba(216,180,107,.1), transparent 55%),
@@ -791,8 +791,9 @@ body {
     margin: 0 0 34px 0;
     font-family: 'Bodoni Moda', 'Didot', Georgia, serif;
     font-weight: 700;
-    font-size: 2.2rem;
+    font-size: clamp(1.1rem, 5.2vw, 2.2rem);
     letter-spacing: .02em;
+    white-space: nowrap;
     background: linear-gradient(180deg, #fdf3d9, #d8b46b 65%, #a97c3f);
     -webkit-background-clip: text;
     background-clip: text;
@@ -1263,34 +1264,30 @@ body {
     }
 
     .stats-panel {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .stat {
-        padding: 16px 8px;
+        padding: 14px 4px;
         border-right: 1px solid rgba(216,180,107,.28);
     }
 
-    .stat:nth-child(2n) {
+    .stat:last-child {
         border-right: none;
     }
 
-    .stat:nth-child(-n+2) {
-        border-bottom: 1px solid rgba(216,180,107,.28);
-    }
-
     .number {
-        font-size: 34px;
+        font-size: 24px;
     }
 
     .label {
         margin-top: 6px;
-        font-size: .58rem;
-        letter-spacing: .1em;
+        font-size: .5rem;
+        letter-spacing: .06em;
         white-space: normal;
         overflow: visible;
         text-overflow: unset;
-        line-height: 1.3;
+        line-height: 1.25;
     }
 
     .contents-grid::-webkit-scrollbar {
