@@ -1299,12 +1299,12 @@ body {
         display: contents;
     }
 
-    /* Назва й рік — у рядку з постером, починаються одразу біля фото і йдуть до кінця рядка */
+    /* Назва й рік — у рядку з постером, рік іде одразу після назви (як на ноут-версії) */
     .leaf-spread .title-row {
         grid-area: title;
         align-self: start;
         align-items: baseline;
-        justify-content: space-between;
+        justify-content: flex-start;
         text-align: left;
         gap: 10px;
         flex-wrap: wrap;
@@ -1312,9 +1312,14 @@ body {
     }
 
     .leaf-spread .desc h2 {
+        flex: 0 1 auto;
         font-size: 1.2rem;
         white-space: normal;
         text-align: left;
+    }
+
+    .leaf-spread .movie-year {
+        flex: 0 0 auto;
     }
 
     /* Опис фільму — окрема область гріду на всю ширину під постером і назвою */
