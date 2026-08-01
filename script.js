@@ -83,62 +83,6 @@ function buildLeaves() {
     }
 }
 
-const TITLE_MIN_SCALE = 0.62;
-const TITLE_STEP_PX = 1;
-
-function fitTitleFont(titleEl) {
-    if (!titleEl) return;
-
-    if (!titleEl.dataset.baseFontSize) {
-        titleEl.dataset.baseFontSize = parseFloat(getComputedStyle(titleEl).fontSize);
-    }
-
-    const baseFontSize = parseFloat(titleEl.dataset.baseFontSize);
-    const minFontSize = baseFontSize * TITLE_MIN_SCALE;
-
-    let fontSize = baseFontSize;
-    titleEl.style.fontSize = fontSize + "px";
-
-    const prevWhiteSpace = titleEl.style.whiteSpace;
-    titleEl.style.whiteSpace = "nowrap";
-
-    while (
-        titleEl.scrollWidth > titleEl.clientWidth &&
-        fontSize > minFontSize
-    ) {
-        fontSize -= TITLE_STEP_PX;
-        titleEl.style.fontSize = fontSize + "px";
-    }
-
-    titleEl.style.whiteSpace = prevWhiteSpace || "";
-}
-
-function fitTitlesForLeaf(leaf) {
-    if (!leaf) return;
-    leaf.querySelectorAll(".movie-title").forEach(fitTitleFont);
-}
-
-function getVisibleLeaves() {
-    const current = flippedCount;
-    return [current - 1, current, current + 1]
-        .filter((i) => i >= 0 && i < leaves.length)
-        .map((i) => leaves[i]);
-}
-
-function fitVisibleTitles() {
-    getVisibleLeaves().forEach(fitTitlesForLeaf);
-}
-
-if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => fitVisibleTitles());
-}
-
-let titleFitResizeTimeout = null;
-window.addEventListener("resize", () => {
-    clearTimeout(titleFitResizeTimeout);
-    titleFitResizeTimeout = setTimeout(fitVisibleTitles, 150);
-});
-
 function computeCategoryCounts() {
     const counts = { movie: 0, series: 0, cartoon: 0, anime: 0 };
 
@@ -279,8 +223,6 @@ function loadLeafImages(leaf) {
         }
         img.classList.add("is-loaded");
     });
-
-    fitTitlesForLeaf(leaf);
 }
 
 function unloadLeafImages(leaf) {
@@ -325,7 +267,7 @@ function getLetterGroups(lang) {
     const hashGroup = [];
 
     getMovieLeaves().forEach(({ leaf, index }) => {
-        const titleEl = leaf.querySelector(".movie-title");
+        const titleEl = leaf.querySelector(".movie-meta .meta-item:first-child .meta-label");
         if (!titleEl) return;
 
         const title = (lang === "ua" ? titleEl.dataset.ua : titleEl.dataset.en) || "";
@@ -496,7 +438,6 @@ function buildContentsSection(letter, entries, lang) {
 function jumpToLeaf(index) {
     if (isAnimating || index < 0 || index >= leaves.length) return;
 
-    closeMovieInfo();
     closeAlphaFlyout();
 
     flippedCount = index;
@@ -512,46 +453,6 @@ if (readingProgressEl) {
     });
 }
 
-const infoOverlay = document.getElementById("info-overlay");
-
-function openMovieInfo(leafSpread) {
-    if (!leafSpread) return;
-    closeMovieInfo();
-    leafSpread.classList.add("movie-info-open");
-    document.body.classList.add("movie-info-open");
-}
-
-function closeMovieInfo() {
-    document.querySelectorAll(".leaf-spread.movie-info-open").forEach((leaf) => {
-        leaf.classList.remove("movie-info-open");
-    });
-    document.body.classList.remove("movie-info-open");
-}
-
-leavesContainer.addEventListener("click", (e) => {
-    const infoBtn = e.target.closest(".info-btn");
-    if (infoBtn) {
-        e.stopPropagation();
-        const leafSpread = infoBtn.closest(".leaf-spread");
-        if (leafSpread.classList.contains("movie-info-open")) {
-            closeMovieInfo();
-        } else {
-            openMovieInfo(leafSpread);
-        }
-        return;
-    }
-
-    const closeBtn = e.target.closest(".info-close");
-    if (closeBtn) {
-        e.stopPropagation();
-        closeMovieInfo();
-    }
-});
-
-if (infoOverlay) {
-    infoOverlay.addEventListener("click", () => closeMovieInfo());
-}
-
 document.addEventListener("click", (e) => {
     if (!alphaFlyoutLetter) return;
     if (e.target.closest(".alpha-nav, .alpha-flyout")) return;
@@ -560,7 +461,6 @@ document.addEventListener("click", (e) => {
 
 document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-        closeMovieInfo();
         closeAlphaFlyout();
     }
 });
@@ -571,6 +471,15 @@ let wheelCooldown = false;
 magazine.addEventListener("wheel", (e) => {
     if (e.target.closest(".side-menu, .top-bar, .mobile-menu-toggle, .reading-progress, .contents-grid, .alpha-nav")) return;
     if (Math.abs(e.deltaY) < WHEEL_THRESHOLD || wheelCooldown) return;
+
+    const scrollArea = e.target.closest(".leaf-spread .right");
+    if (scrollArea) {
+        const atTop = scrollArea.scrollTop <= 0;
+        const atBottom = scrollArea.scrollTop + scrollArea.clientHeight >= scrollArea.scrollHeight - 1;
+
+        if (e.deltaY > 0 && !atBottom) return;
+        if (e.deltaY < 0 && !atTop) return;
+    }
 
     e.preventDefault();
 
@@ -619,7 +528,6 @@ magazine.addEventListener("touchend", (e) => {
 menuHomeButton.addEventListener("click", (e) => {
     e.stopPropagation();
 
-    closeMovieInfo();
     clearCategoryFilter();
     flippedCount = 0;
     updateLeaves();

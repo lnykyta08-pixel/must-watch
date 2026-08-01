@@ -462,6 +462,19 @@ body {
     background:
         radial-gradient(circle at 85% 0%, rgba(216,180,107,.08), transparent 55%),
         linear-gradient(160deg, #151312 0%, #0b0a09 100%);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(216,180,107,.35) transparent;
+}
+
+.leaf-spread .right::-webkit-scrollbar {
+    width: 5px;
+}
+
+.leaf-spread .right::-webkit-scrollbar-thumb {
+    background: rgba(216,180,107,.35);
+    border-radius: 3px;
 }
 
 .leaf-spread .poster {
@@ -489,16 +502,9 @@ body {
 }
 
 .title-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 14px;
+    text-align: center;
+    margin-top: -16px;
     margin-bottom: 18px;
-}
-
-.movie-title {
-    flex: 1 1 auto;
-    min-width: 0;
 }
 
 .cat-word {
@@ -516,6 +522,7 @@ body {
     font-weight: 700;
     font-size: 2.1rem;
     letter-spacing: .01em;
+    text-align: center;
     background: linear-gradient(180deg, #fdf3d9, #d8b46b 65%, #a97c3f);
     -webkit-background-clip: text;
     background-clip: text;
@@ -707,22 +714,20 @@ body {
     word-break: break-word;
 }
 
-.info-btn,
-.info-close,
-.info-overlay {
-    display: none;
-}
-
 .rating {
     position: absolute;
-    right: 42px;
-    bottom: 42px;
+    right: calc(50% + 24px);
+    bottom: 24px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 4px;
-    padding-top: 14px;
-    border-top: 1px solid rgba(216,180,107,.32);
+    padding: 12px 18px;
+    background: rgba(20, 18, 16, 0.72);
+    border: 1px solid rgba(216,180,107,.4);
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
 }
 
 .rating-label {
@@ -1163,6 +1168,7 @@ body {
     }
 
     body.mobile-menu-open .mobile-menu-toggle {
+        top: 26px;
         color: #f1e6cf;
         transform: rotate(90deg);
     }
@@ -1344,7 +1350,7 @@ body {
         grid-area: title;
         display: block;
         align-self: start;
-        text-align: left;
+        text-align: center;
         margin: 20px 20px 0 12px;
     }
 
@@ -1352,7 +1358,7 @@ body {
         display: inline;
         font-size: 1.2rem;
         white-space: normal;
-        text-align: left;
+        text-align: center;
     }
 
     .leaf-spread .movie-meta {
@@ -1376,7 +1382,12 @@ body {
         justify-content: space-between;
         gap: 10px;
         padding: 14px 22px calc(20px + env(safe-area-inset-bottom)) 22px;
+        background: none;
+        border: none;
         border-top: 1px solid rgba(216,180,107,.32);
+        border-radius: 0;
+        box-shadow: none;
+        backdrop-filter: none;
         margin-top: 20px;
     }
 }
