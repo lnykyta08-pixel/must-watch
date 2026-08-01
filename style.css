@@ -501,11 +501,6 @@ body {
     min-width: 0;
 }
 
-.movie-year {
-    flex: 0 0 auto;
-    white-space: nowrap;
-}
-
 .cat-word {
     font-weight: 600;
 }
@@ -527,15 +522,6 @@ body {
     color: transparent;
 }
 
-.movie-year {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    font-size: .85rem;
-    letter-spacing: .16em;
-    color: #cbb488;
-    opacity: .85;
-}
-
 .movie-meta {
     display: flex;
     flex-direction: column;
@@ -545,26 +531,24 @@ body {
 
 .meta-item {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .meta-label {
     font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    font-size: .62rem;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    color: #cbb488;
-    opacity: .75;
-    white-space: nowrap;
+    font-weight: 600;
+    font-size: .78rem;
+    letter-spacing: .04em;
+    color: #f1e6cf;
 }
 
 .meta-value {
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
-    font-size: .82rem;
-    color: #f1e6cf;
+    font-size: .64rem;
+    letter-spacing: .06em;
+    color: #cbb488;
 }
 
 .reading-progress {
@@ -1183,14 +1167,6 @@ body {
         transform: rotate(90deg);
     }
 
-    body.mobile-menu-open .mobile-menu-toggle {
-        top: 56px;
-    }
-
-    body.mobile-menu-open .lang-switch {
-        right: 58px;
-    }
-
     .top-bar {
         position: static;
     }
@@ -1211,7 +1187,7 @@ body {
 
     .lang-switch {
         position: fixed;
-        top: 56px;
+        top: 28px;
         right: 10px;
         transform: none;
         flex-direction: row;
@@ -1231,7 +1207,7 @@ body {
 
     .side-menu {
         position: fixed;
-        top: 106px;
+        top: 80px;
         right: 10px;
         transform: none;
         flex-direction: column;
@@ -1241,7 +1217,7 @@ body {
 
     .alpha-nav {
         position: fixed;
-        top: 56px;
+        top: 28px;
         left: 10px;
         transform: none;
         flex-direction: row;
@@ -1379,14 +1355,9 @@ body {
         text-align: left;
     }
 
-    .leaf-spread .movie-year {
-        display: inline;
-        margin-left: 10px;
-    }
-
     .leaf-spread .movie-meta {
         grid-area: title;
-        margin: 10px 20px 0 12px;
+        margin: 90px 20px 0 12px;
     }
 
     .leaf-spread .desc p {
